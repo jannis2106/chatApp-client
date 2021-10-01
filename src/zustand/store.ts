@@ -1,0 +1,85 @@
+import create from "zustand";
+
+interface Participant {
+  id: number;
+  username: string;
+  image: string;
+  aboutMe: string;
+}
+
+interface Message {
+  user: {
+    usernameTag: string;
+    image?: string;
+  };
+  messageContent: string;
+  date: Date;
+  id: number;
+}
+
+interface ChatState {
+  currentChat: number;
+  changeCurrentChat: (chatId: number) => void;
+
+  participants: Participant[];
+  setParticipants: (participants: Participant[]) => void;
+
+  admins: Participant[];
+  setAdmins: (admins: Participant[]) => void;
+
+  latestMessages: Message[];
+  addLatestMessages: (message: Message) => void;
+
+  loggedIn: boolean;
+  setLoggedIn: (value: boolean) => void;
+
+  viewRoomInfo: boolean;
+  setViewRoomInfo: (value: boolean) => void;
+
+  isCreateRoomVisible: boolean;
+  setIsCreateRoomVisible: (value: boolean) => void;
+
+  forceRefreshValue: number;
+  setForceRefreshValue: () => void;
+
+  currentUsernameTag: string | null;
+  setCurrentUsernameTag: (value: string) => void;
+}
+
+const useStore = create<ChatState>((set) => ({
+  currentChat: 0,
+  changeCurrentChat: (chatId) => {
+    set({ currentChat: chatId });
+  },
+
+  participants: [],
+  setParticipants: (participantsInput) =>
+    set((state) => ({ participants: participantsInput })),
+
+  admins: [],
+  setAdmins: (adminInput) => set((state) => ({ admins: adminInput })),
+
+  latestMessages: [],
+  addLatestMessages: (message) =>
+    set((state) => ({ latestMessages: [...state.latestMessages, message] })),
+
+  loggedIn: false,
+  setLoggedIn: (value) => set((state) => ({ loggedIn: value })),
+
+  viewRoomInfo: false,
+  setViewRoomInfo: (value) => set((state) => ({ viewRoomInfo: value })),
+
+  isCreateRoomVisible: false,
+  setIsCreateRoomVisible: (value) =>
+    set((state) => ({ isCreateRoomVisible: value })),
+
+  forceRefreshValue: 0,
+  setForceRefreshValue: () =>
+    set((state) => ({ forceRefreshValue: state.forceRefreshValue + 1 })),
+
+  currentUsernameTag: null,
+  setCurrentUsernameTag: (value) =>
+    set((state) => ({ currentUsernameTag: value })),
+}));
+
+export default useStore;
