@@ -1,3 +1,4 @@
+import "../sass/pages/chat.sass";
 import { AllChatRooms } from "../components/Chat/AllChatRooms";
 import { ChatRoom } from "../components/Chat/ChatRoom";
 import { Participants } from "../components/Chat/Participants";
@@ -17,7 +18,7 @@ export const Chat = () => {
   }
 
   return (
-    <>
+    <div className="application">
       <Header />
       <div className="chat">
         <AllChatRooms />
@@ -26,6 +27,6 @@ export const Chat = () => {
         {/* {currentChat === 0 ? <div></div> : <ChatSide />} */}
         {isCreateRoomVisible && <CreateRoom />}
       </div>
-    </>
+    </div>
   );
 };

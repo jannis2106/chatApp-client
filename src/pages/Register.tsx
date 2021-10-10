@@ -54,7 +54,7 @@ export const Register = () => {
   console.log(data);
 
   return (
-    <>
+    <div className="register">
       <h1>Register</h1>
       <Formik
         initialValues={{
@@ -116,6 +116,6 @@ export const Register = () => {
           </Form>
         )}
       </Formik>
-    </>
+    </div>
   );
 };

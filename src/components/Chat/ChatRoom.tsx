@@ -17,6 +17,7 @@ const LOAD_ROOM_QUERY = gql`
           id
           username
           image
+          aboutMe
         }
         image
       }
@@ -246,7 +247,7 @@ export const ChatRoom = () => {
             <div key={message?.id}>
               <ProfileImage
                 image={message?.user?.image}
-                userName={message?.user?.username}
+                username={message?.user?.username}
               />
               <p>{message?.user?.usernameTag}</p>
               <p>{message?.messageContent}</p>

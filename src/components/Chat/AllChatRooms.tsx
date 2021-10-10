@@ -82,7 +82,6 @@ export const AllChatRooms = () => {
           className="roomPreview"
           // * use this key (or just the room.id to query a specific room)
           key={room.id}
-          style={{ backgroundColor: "#ccc", marginBottom: "20px" }}
           onClick={onChatClick(room.id)}
         >
           <img

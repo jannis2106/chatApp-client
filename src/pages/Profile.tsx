@@ -59,7 +59,7 @@ export const Profile: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="profile">
       <Link to="/">
         <button>
           <h1> &lt; </h1> {/* &lt; = "<" */}

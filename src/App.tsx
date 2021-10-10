@@ -5,6 +5,7 @@ import { Register } from "./pages/Register";
 import { Chat } from "./pages/Chat";
 import { Profile } from "./pages/Profile";
 import { CreateRoom } from "./components/Chat/CreateRoom";
+import "./sass/main.sass"
 
 const App = () => {
   return (

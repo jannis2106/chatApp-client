@@ -65,9 +65,7 @@ export const RoomInfo: React.FC = () => {
   return (
     <div className="roomInfo">
       <header>
-        <button onClick={closeRoomInfo} style={{ cursor: "pointer" }}>
-          X
-        </button>
+        <button onClick={closeRoomInfo}>X</button>
       </header>
       <h1>{room.loadRoom.room.name}</h1>
       <img src={room.loadRoom.room.image ? room.loadRoom.image : ""} alt="" />

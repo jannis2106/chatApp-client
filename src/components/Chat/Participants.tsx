@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment } from "@fortawesome/free-solid-svg-icons";
 
 const LEAVE_ROOM_MUTATION = gql`
   mutation leaveRoom($roomId: Float!) {
@@ -78,34 +80,31 @@ export const Participants = () => {
 
   return (
     <div className="chatSideDetail">
-      <div className="participants">
-        <h3>PARTICIPANTS</h3>
-        {participants?.map((participant) => (
-          <div key={"participant" + participant.id}>
-            <ProfileImage
+      <div className="user">
+        <div className="participants">
+          <h3>PARTICIPANTS</h3>
+          {participants?.map((participant) => (
+            <UserCard
+              id={participant.id}
               image={participant.image}
-              userName={participant.username}
+              username={participant.username}
+              aboutMe={participant.aboutMe}
             />
-            <p>{participant.username}</p>
-            <p>{participant.aboutMe}</p>
-          </div>
-        ))}
-        <h3>ADMINS</h3>
-        {admins?.map((admin) => (
-          <div key={"admin" + admin.id}>
-            <ProfileImage image={admin.image} userName={admin.username} />
-
-            <p>{admin.username}</p>
-            <p>{admin.aboutMe}</p>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className="admins">
+          <h3>ADMINS</h3>
+          {admins?.map((admin) => (
+            <UserCard
+              id={admin.id}
+              image={admin.image}
+              username={admin.username}
+              aboutMe={admin.aboutMe}
+            />
+          ))}
+        </div>
       </div>
       <div className="roomActions">
-        <form onSubmit={forceUpdate}>
-          <button type="submit" onClick={leaveRoom}>
-            Leave Room
-          </button>
-        </form>
         <Formik
           initialValues={{
             userNameOrEmail: "",
@@ -125,7 +124,7 @@ export const Participants = () => {
             <Form onSubmit={handleSubmit}>
               {isAdmin?.isAdmin ? (
                 <>
-                  <label htmlFor="userNameOrEmail">
+                  <label htmlFor="userNameOrEmail" className="addUserLabel">
                     Enter <code>user@email.com</code> OR{" "}
                     <code>UserName#1234</code> <br />
                   </label>
@@ -134,12 +133,15 @@ export const Participants = () => {
                     validate={validateAddUserInput}
                     type="text"
                     id="userNameOrEmail"
+                    className="addUserInput"
                   />
                   <ErrorMessage name="userNameOrEmail" component="div" /> <br />
                   {userGotAdded?.addUserToRoom === false && (
                     <div>User not found or already joined the room</div>
                   )}
-                  <button type="submit">Add User</button>
+                  <button type="submit" className="addUserButton">
+                    Add User
+                  </button>
                 </>
               ) : (
                 <span></span>
@@ -147,9 +149,42 @@ export const Participants = () => {
             </Form>
           )}
         </Formik>
+        <form onSubmit={forceUpdate}>
+          <button type="submit" onClick={leaveRoom} className="leaveRoom">
+            Leave Room
+          </button>
+        </form>
       </div>
     </div>
   );
 };
 
 // add Formik validation to the form add User
+
+interface UserCardProps {
+  id: number;
+  image: string;
+  username: string;
+  aboutMe: string;
+}
+
+const UserCard: React.FC<UserCardProps> = ({
+  id,
+  image,
+  username,
+  aboutMe,
+}) => {
+  return (
+    <div key={"admin" + id} className="userCard">
+      <ProfileImage image={image} username={username} />
+
+      <div className="nameAboutme">
+        <p className="userName">{username}</p>
+        <p className="aboutMe">{aboutMe}</p>
+      </div>
+      <div className="sendMessage">
+        <FontAwesomeIcon icon={faComment} />
+      </div>
+    </div>
+  );
+};

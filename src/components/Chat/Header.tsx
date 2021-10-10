@@ -29,7 +29,7 @@ export const Header = () => {
         <Link to="/profile">
           <ProfileImage
             image={profileImageData?.me.image}
-            userName={profileImageData?.me.username}
+            username={profileImageData?.me.username}
           />
         </Link>
       </div>
