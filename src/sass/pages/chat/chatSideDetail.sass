@@ -1,0 +1,214 @@
+@use "../../main" as main
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap')
+
+.chatSideDetail
+    width: 100%
+    padding-left: 2em
+
+    .user
+        overflow-y: scroll
+        height: 80vh
+        margin-bottom: 3vh
+        &::-webkit-scrollbar
+            width: .7em
+
+        &::-webkit-scrollbar-track
+            background: transparent
+
+        &::-webkit-scrollbar-thumb
+            background: main.$blue
+            transition: .6s ease
+            border-radius: 10000px
+
+            &:hover
+                background: #8d8bff
+
+    .participants, .admins
+        h3
+            color: main.$text-color
+            font-weight: 500
+            margin: 2em 0 1em 0
+
+        .userCard
+            margin-bottom: 3em
+            display: flex
+            align-items: center
+            justify-content: left
+            position: relative
+
+            img, svg
+                height: 2.5em
+                width: 2.5em
+                border-radius: .7em
+                margin-right: .5em
+                cursor: pointer
+
+            .userName 
+                font-size: 1em
+                color: main.$text-color
+
+            .aboutMe
+                font-size: .8em
+                color: main.$text-color-50
+
+            &::after
+                content: ""
+                width: 100%
+                height: 2px
+                background: main.$text-color
+                opacity: main.$opacity-15
+                position: absolute
+                bottom: -1.5em
+                right: 0
+
+            &:last-child
+                margin-bottom: 0
+                &::after
+                    content: ""
+                    width: 0
+                    height: 0
+                    background: none
+
+            .sendMessage
+                background: main.$purple-bg
+                width: 2.5em
+                height: 2.5em
+                border-radius: .7em
+                display: flex
+                align-items: center
+                justify-content: center
+                margin-left: auto
+                margin-right: 2em
+                cursor: pointer
+                transition: .2s ease
+
+                &:hover
+                    background: main.$purple-bg
+                    filter: brightness(1.2)
+                    border-radius: .9em
+
+                svg
+                    color: main.$pink
+                    width: 1.25em
+                    height: 1.25em
+                    margin: 0
+        
+    .admins
+        margin-top: 3em
+
+    .roomActions
+        position: sticky
+        bottom: 0
+        margin-top: 3em
+        margin-right: 2em
+        background: rgba(0, 0, 0, 0.445)
+        backdrop-filter: blur(10px)
+        border: 2px transparent solid
+        background-clip: padding-box
+        -moz-background-clip: padding
+        border-radius: 1em 1em 0 0
+        padding: 1em 2em
+        transition: .2s ease 1s
+
+        &:hover
+            transform: translateY(-5em)   
+            transition: .2s ease
+
+        &.admin
+            height: 20em 
+            transform: translateY(17em) 
+            &:hover 
+                transform: translateY(3em) 
+                transition: .2s ease 
+
+        &.notAdmin
+            height: 10em
+            transform: translateY(7em)
+            &:hover
+                transform: translateY(1em)
+                transition: .2s ease
+
+        .heading
+            color: main.$text-color
+            font-size: 1em
+            text-align: center
+            font-weight: 500
+            padding-bottom: 1em
+        
+        .addUserLabel
+            color: main.$text-color-50
+            font-size: .8em
+            cursor: pointer
+
+            code
+                font-size: 1.2em
+
+        .addUserWrapper
+            position: relative
+            display: flex
+            align-items: center
+            border: 1px #000000aa solid
+            background: #00000033
+            padding: 0 1em
+            transition: .2s ease
+
+            &:focus-within, &:active
+                outline: none
+                border-radius: 1em
+                border: 1px main.$pink solid
+            
+            .addUserInput
+                background: transparent
+                border-radius: .6em
+                width: 25em
+                height: 3em
+                padding: 1em 0
+                z-index: 12
+                color: main.$text-color
+                border: none
+                font-family: 'Roboto', sans-serif
+
+                &:focus, &:active
+                    outline: none        
+
+            .addUserInputHint
+                position: absolute
+                padding: 1em 0
+                left: 1em
+                color: main.$text-color-30
+                z-index: 1
+
+            .inputText
+                font-size: 1em
+                font-weight: 400
+                letter-spacing: .04em
+                line-height: 20px
+                white-space: pre
+        
+        .addUserButton, .leaveRoom
+            height: 3em
+            width: 10em
+            background: main.$pink
+            border-radius: .6em
+            border: none
+            color: main.$text-color
+            font-weight: 600
+            transition: .2s ease
+
+
+        .addUserButton
+            margin: 1em 0
+            opacity: .5
+
+            &.valid
+                cursor: pointer
+                opacity: 1
+
+                &:hover
+                    filter: brightness(1.2)
+
+        .leaveRoom
+            cursor: pointer
+            margin-top: 2em
+            &:hover
+                filter: brightness(1.2)

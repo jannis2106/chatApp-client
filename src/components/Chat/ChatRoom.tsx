@@ -112,7 +112,7 @@ export const ChatRoom = () => {
 
   // * Server Data * //
   let { data: room, loading } = useQuery(LOAD_ROOM_QUERY, {
-    // @ts-ignore idk why but currentChat isn't a number
+    // @ts-ignore not sure why but currentChat isn't a number
     variables: { roomId: parseInt(currentChat, 10) },
   });
   const { data: userData } = useQuery(ME_QUERY);
@@ -168,7 +168,7 @@ export const ChatRoom = () => {
     if (!(input!.value === "")) {
       sendMessageMutation({
         variables: {
-          // @ts-ignore idk why but currentChat isn't a number
+          // @ts-ignore not sure why but currentChat isn't a number
           roomId: parseInt(currentChat, 10),
           message: input!.value,
         },

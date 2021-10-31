@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
 import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,25 +30,6 @@ const useForceUpdate = () => {
   return () => setValue((value) => value + 1);
 };
 
-const validateAddUserInput = (value: string) => {
-  let error;
-
-  if (
-    // email regex
-    /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ||
-    // username#tag regex
-    /^.{3,32}#[0-9]{4}$/.test(value)
-  ) {
-    return error;
-  } else {
-    error = "Invalid email or username format";
-  }
-
-  console.log(/^.{3,32}#[0-9]{4}$/.test(value));
-  console.log(error);
-  console.log(value);
-};
-
 export const Participants = () => {
   const participants = useStore((state) => state.participants);
   const admins = useStore((state) => state.admins);
@@ -56,7 +37,7 @@ export const Participants = () => {
 
   const [leaveRoomMutation] = useMutation(LEAVE_ROOM_MUTATION, {
     variables: {
-      // @ts-ignore idk why but currentChat isn't a number
+      // @ts-ignore not sure why but currentChat isn't a number
       roomId: parseInt(currentChat, 10),
     },
   });
@@ -65,15 +46,74 @@ export const Participants = () => {
 
   const { data: isAdmin } = useQuery(IS_ADMIN_QUERY, {
     variables: {
-      // @ts-ignore idk why but currentChat isn't a number
+      // @ts-ignore not sure why but currentChat isn't a number
       roomId: parseInt(currentChat, 10),
     },
   });
 
-  console.log(userGotAdded);
+  const [addUserInputValue, setAddUserInputValue] = useState("");
+  const [isAddUserInputValueValid, setIsAddUserInputValueValid] =
+    useState(false);
 
   const leaveRoom = () => {
     leaveRoomMutation();
+  };
+
+  console.log(userGotAdded);
+
+  const handleAddUserInputChange = (e: any) => {
+    const value = e.target.value;
+    const duplicateHashtagRegex =
+      /#(?:([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#/gm;
+    const tooManyNumbersRegex =
+      /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9][0-9][0-9][0-9][0-9])$/gm;
+
+    if (duplicateHashtagRegex.test(value) || tooManyNumbersRegex.test(value)) {
+      return;
+    }
+
+    const containsHashtagRegex = /#/;
+    const isNumberOrHastagRegex = /[0-9]|#/;
+
+    if (
+      containsHashtagRegex.test(value) &&
+      !isNumberOrHastagRegex.test(value[value.length - 1])
+    ) {
+      return;
+    }
+
+    setAddUserInputValue(value);
+  };
+
+  const getAddUserInput = (input: string) => {
+    const validRegex =
+      /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9][0-9][0-9][0-9])$/gm;
+    const oneMissingNumberRegex =
+      /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9][0-9][0-9])$/gm;
+    const twoMissingNumbersRegex =
+      /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9][0-9])$/gm;
+    const threeMissingNumbersRegex =
+      /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9])$/gm;
+
+    if (input.endsWith("#")) {
+      setIsAddUserInputValueValid(false);
+      return `${input}0000`;
+    } else if (threeMissingNumbersRegex.test(input)) {
+      setIsAddUserInputValueValid(false);
+      return `${input}000`;
+    } else if (twoMissingNumbersRegex.test(input)) {
+      setIsAddUserInputValueValid(false);
+      return `${input}00`;
+    } else if (oneMissingNumberRegex.test(input)) {
+      setIsAddUserInputValueValid(false);
+      return `${input}0`;
+    } else if (validRegex.test(input)) {
+      setIsAddUserInputValueValid(true);
+      return input;
+    } else {
+      setIsAddUserInputValueValid(false);
+      return `${input}#0000`;
+    }
   };
 
   const forceUpdate = useForceUpdate();
@@ -104,7 +144,8 @@ export const Participants = () => {
           ))}
         </div>
       </div>
-      <div className="roomActions">
+      <div className={`roomActions ${isAdmin?.isAdmin ? "admin" : "notAdmin"}`}>
+        <h2 className="heading">Room Actions</h2>
         <Formik
           initialValues={{
             userNameOrEmail: "",
@@ -114,32 +155,41 @@ export const Participants = () => {
             addUserMutation({
               variables: {
                 emailOrUsernameTag: values.userNameOrEmail,
-                // @ts-ignore idk why but currentChat isn't a number
+                // @ts-ignore not sure why but currentChat isn't a number
                 roomId: parseInt(currentChat, 10),
               },
             });
           }}
         >
-          {({ handleSubmit }) => (
+          {({ handleSubmit, errors, touched, values }) => (
             <Form onSubmit={handleSubmit}>
               {isAdmin?.isAdmin ? (
                 <>
-                  <label htmlFor="userNameOrEmail" className="addUserLabel">
-                    Enter <code>user@email.com</code> OR{" "}
-                    <code>UserName#1234</code> <br />
-                  </label>
-                  <Field
-                    name="userNameOrEmail"
-                    validate={validateAddUserInput}
-                    type="text"
-                    id="userNameOrEmail"
-                    className="addUserInput"
-                  />
-                  <ErrorMessage name="userNameOrEmail" component="div" /> <br />
-                  {userGotAdded?.addUserToRoom === false && (
-                    <div>User not found or already joined the room</div>
-                  )}
-                  <button type="submit" className="addUserButton">
+                  <div className="addUserWrapper">
+                    <Field
+                      name="userNameOrEmail"
+                      value={addUserInputValue}
+                      type="text"
+                      id="userNameOrEmail"
+                      className="addUserInput inputText"
+                      autoComplete="off"
+                      placeholder="Enter a Username#0000"
+                      onChange={handleAddUserInputChange}
+                    />
+                    {addUserInputValue !== "" ? (
+                      <div className="addUserInputHint inputText">
+                        {getAddUserInput(addUserInputValue)}
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    className={`addUserButton ${
+                      isAddUserInputValueValid ? "valid" : ""
+                    }`}
+                  >
                     Add User
                   </button>
                 </>

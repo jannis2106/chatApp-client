@@ -27,7 +27,7 @@ export const RoomInfo: React.FC = () => {
   const currentChat = useStore((state) => state.currentChat);
 
   let { data: room, loading } = useQuery(LOAD_ROOM_QUERY, {
-    // @ts-ignore idk why but currentChat isn't a number
+    // @ts-ignore not sure why but currentChat isn't a number
     variables: { roomId: parseInt(currentChat, 10) },
   });
 
