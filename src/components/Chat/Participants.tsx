@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
@@ -114,7 +114,6 @@ export const Participants = () => {
     }
   };
 
-  // ! die 4 regexes nehmen kein leerzeichen, sprich test  #1 wird nicht verstanden und es wird test   #1#0000 zurrückgegeben
   // add user hint value
   const getAddUserInput = (input: string) => {
     const validRegex =
@@ -152,55 +151,7 @@ export const Participants = () => {
     return `${input}#0000`;
   };
 
-  useEffect(() => {
-    // setAddUserStatus(addUserMutationData);
-    console.log(addUserMutationData);
-  }, [addUserMutationData]);
-
   const forceUpdate = useForceUpdate();
-
-  // const addUser = (usernameTag: string, roomId: number) => {
-  //   return (e: React.MouseEvent) => {
-  //     console.log(usernameTag);
-  //     addUserMutation({
-  //       variables: {
-  //         usernameTag,
-  //         roomId,
-  //       },
-  //     });
-  //     // participantsArray -> add returned user to it -> save to room participants query
-  //     let newParticipant = {
-  //       id: addUserMutationData.addUserToRoom.user.id,
-  //       username: addUserMutationData.addUserToRoom.user.username,
-  //       image: addUserMutationData.addUserToRoom.user.image,
-  //       aboutMe: addUserMutationData.addUserToRoom.user.aboutme,
-  //     };
-  //     let newParticipants = participants.push(newParticipant);
-
-  //     client.writeQuery({
-  //       query: gql`
-  //         query loadRoom($roomId: Float!) {
-  //           loadRoom(roomId: $roomId) {
-  //             participants {
-  //               id
-  //               username
-  //               image
-  //               aboutMe
-  //             }
-  //           }
-  //         }
-  //       `,
-  //       data: {
-  //         loadRoom: {
-  //           participants: newParticipants,
-  //         },
-  //       },
-  //       // @ts-ignore
-  //       variables: { userId: usernameTag, roomId: parseInt(currentChat, 10) },
-  //     });
-  //     e.preventDefault();
-  //   };
-  // };
 
   return (
     <div className="chatSideDetail">
