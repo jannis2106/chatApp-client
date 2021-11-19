@@ -6,39 +6,7 @@ import client from "../../apollo/client";
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
-
-const LOAD_ROOM_QUERY = gql`
-  query loadRoom($roomId: Float!) {
-    loadRoom(roomId: $roomId) {
-      id
-      room {
-        name
-        admins {
-          id
-          username
-          image
-          aboutMe
-        }
-        image
-      }
-      participants {
-        id
-        username
-        image
-        aboutMe
-      }
-      messages {
-        user {
-          usernameTag
-          image
-        }
-        messageContent
-        date
-        id
-      }
-    }
-  }
-`;
+import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Mutations";
 
 const SEND_MESSAGE_MUTATION = gql`
   mutation sendMessage($roomId: Float!, $message: String!) {
@@ -51,6 +19,7 @@ const MESSAGE_SUBSCRIPTION = gql`
     messageSubscription(roomId: $roomId) {
       id
       user {
+        id
         image
         usernameTag
       }
@@ -77,6 +46,7 @@ const LOAD_ROOM_MESSAGES_QUERY = gql`
       messages {
         id
         user {
+          id
           image
           username
           usernameTag
@@ -200,6 +170,7 @@ export const ChatRoom = () => {
               messages {
                 id
                 user {
+                  id
                   image
                   username
                   usernameTag

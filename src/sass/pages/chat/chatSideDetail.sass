@@ -110,14 +110,13 @@
         padding: 1em 2em
         transition: .2s ease 1s
 
-        &:hover
-            transform: translateY(-5em)   
-            transition: .2s ease
-
         &.admin
             height: 20em 
             transform: translateY(17em) 
             &:hover 
+                transform: translateY(3em) 
+                transition: .2s ease 
+            &.focused
                 transform: translateY(3em) 
                 transition: .2s ease 
 
@@ -125,6 +124,9 @@
             height: 10em
             transform: translateY(7em)
             &:hover
+                transform: translateY(1em)
+                transition: .2s ease
+            &.focused
                 transform: translateY(1em)
                 transition: .2s ease
 
@@ -156,6 +158,9 @@
                 outline: none
                 border-radius: 1em
                 border: 1px main.$pink solid
+
+            &.error
+                border-color: main.$error
             
             .addUserInput
                 background: transparent
@@ -169,7 +174,7 @@
                 font-family: 'Roboto', sans-serif
 
                 &:focus, &:active
-                    outline: none        
+                    outline: none
 
             .addUserInputHint
                 position: absolute
@@ -206,6 +211,11 @@
 
                 &:hover
                     filter: brightness(1.2)
+
+        .addUserStatus
+            text-align: right
+            transform: translateY(50%)
+            color: main.$text-color
 
         .leaveRoom
             cursor: pointer

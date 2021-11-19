@@ -1,10 +1,12 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
+import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Mutations";
+// import client from "../../apollo/client";
 
 const LEAVE_ROOM_MUTATION = gql`
   mutation leaveRoom($roomId: Float!) {
@@ -19,8 +21,17 @@ const IS_ADMIN_QUERY = gql`
 `;
 
 const ADD_USER_MUTATION = gql`
-  mutation addUserToRoom($emailOrUsernameTag: String!, $roomId: Float!) {
-    addUserToRoom(emailOrUsernameTag: $emailOrUsernameTag, roomId: $roomId)
+  mutation addUserToRoom($usernameTag: String!, $roomId: Float!) {
+    addUserToRoom(usernameTag: $usernameTag, roomId: $roomId) {
+      message
+      statusCode
+      user {
+        id
+        username
+        image
+        aboutMe
+      }
+    }
   }
 `;
 
@@ -41,8 +52,10 @@ export const Participants = () => {
       roomId: parseInt(currentChat, 10),
     },
   });
-  const [addUserMutation, { data: userGotAdded }] =
+  const [addUserMutation, { data: addUserMutationData }] =
     useMutation(ADD_USER_MUTATION);
+
+  const [hasFocus, setFocus] = useState(false);
 
   const { data: isAdmin } = useQuery(IS_ADMIN_QUERY, {
     variables: {
@@ -59,10 +72,21 @@ export const Participants = () => {
     leaveRoomMutation();
   };
 
-  console.log(userGotAdded);
-
+  // handles which inputs are / aren't accepted for addUserInputValue
   const handleAddUserInputChange = (e: any) => {
     const value = e.target.value;
+
+    const noSpacesRegex = /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)$/gm;
+
+    if (!noSpacesRegex.test(value)) {
+      return;
+    }
+
+    // username max-length is 20 -> 20 + # + 4 numbers
+    if (value.length > 25) {
+      return;
+    }
+
     const duplicateHashtagRegex =
       /#(?:([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#/gm;
     const tooManyNumbersRegex =
@@ -75,6 +99,7 @@ export const Participants = () => {
     const containsHashtagRegex = /#/;
     const isNumberOrHastagRegex = /[0-9]|#/;
 
+    // can't enter letter after #
     if (
       containsHashtagRegex.test(value) &&
       !isNumberOrHastagRegex.test(value[value.length - 1])
@@ -83,8 +108,14 @@ export const Participants = () => {
     }
 
     setAddUserInputValue(value);
+    // reset error messages on change
+    if (addUserMutationData?.addUserToRoom?.message) {
+      addUserMutationData.addUserToRoom.message = undefined;
+    }
   };
 
+  // ! die 4 regexes nehmen kein leerzeichen, sprich test  #1 wird nicht verstanden und es wird test   #1#0000 zurrückgegeben
+  // add user hint value
   const getAddUserInput = (input: string) => {
     const validRegex =
       /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9][0-9][0-9][0-9])$/gm;
@@ -94,29 +125,82 @@ export const Participants = () => {
       /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9][0-9])$/gm;
     const threeMissingNumbersRegex =
       /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9])$/gm;
+    const hastagRegex = /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#$/gm;
 
-    if (input.endsWith("#")) {
+    if (hastagRegex.test(input)) {
       setIsAddUserInputValueValid(false);
       return `${input}0000`;
-    } else if (threeMissingNumbersRegex.test(input)) {
+    }
+    if (threeMissingNumbersRegex.test(input)) {
       setIsAddUserInputValueValid(false);
       return `${input}000`;
-    } else if (twoMissingNumbersRegex.test(input)) {
+    }
+    if (twoMissingNumbersRegex.test(input)) {
       setIsAddUserInputValueValid(false);
       return `${input}00`;
-    } else if (oneMissingNumberRegex.test(input)) {
+    }
+    if (oneMissingNumberRegex.test(input)) {
       setIsAddUserInputValueValid(false);
       return `${input}0`;
-    } else if (validRegex.test(input)) {
+    }
+    if (validRegex.test(input)) {
       setIsAddUserInputValueValid(true);
       return input;
-    } else {
-      setIsAddUserInputValueValid(false);
-      return `${input}#0000`;
     }
+
+    setIsAddUserInputValueValid(false);
+    return `${input}#0000`;
   };
 
+  useEffect(() => {
+    // setAddUserStatus(addUserMutationData);
+    console.log(addUserMutationData);
+  }, [addUserMutationData]);
+
   const forceUpdate = useForceUpdate();
+
+  // const addUser = (usernameTag: string, roomId: number) => {
+  //   return (e: React.MouseEvent) => {
+  //     console.log(usernameTag);
+  //     addUserMutation({
+  //       variables: {
+  //         usernameTag,
+  //         roomId,
+  //       },
+  //     });
+  //     // participantsArray -> add returned user to it -> save to room participants query
+  //     let newParticipant = {
+  //       id: addUserMutationData.addUserToRoom.user.id,
+  //       username: addUserMutationData.addUserToRoom.user.username,
+  //       image: addUserMutationData.addUserToRoom.user.image,
+  //       aboutMe: addUserMutationData.addUserToRoom.user.aboutme,
+  //     };
+  //     let newParticipants = participants.push(newParticipant);
+
+  //     client.writeQuery({
+  //       query: gql`
+  //         query loadRoom($roomId: Float!) {
+  //           loadRoom(roomId: $roomId) {
+  //             participants {
+  //               id
+  //               username
+  //               image
+  //               aboutMe
+  //             }
+  //           }
+  //         }
+  //       `,
+  //       data: {
+  //         loadRoom: {
+  //           participants: newParticipants,
+  //         },
+  //       },
+  //       // @ts-ignore
+  //       variables: { userId: usernameTag, roomId: parseInt(currentChat, 10) },
+  //     });
+  //     e.preventDefault();
+  //   };
+  // };
 
   return (
     <div className="chatSideDetail">
@@ -126,6 +210,7 @@ export const Participants = () => {
           {participants?.map((participant) => (
             <UserCard
               id={participant.id}
+              key={participant.id}
               image={participant.image}
               username={participant.username}
               aboutMe={participant.aboutMe}
@@ -137,6 +222,7 @@ export const Participants = () => {
           {admins?.map((admin) => (
             <UserCard
               id={admin.id}
+              key={admin.id}
               image={admin.image}
               username={admin.username}
               aboutMe={admin.aboutMe}
@@ -144,20 +230,36 @@ export const Participants = () => {
           ))}
         </div>
       </div>
-      <div className={`roomActions ${isAdmin?.isAdmin ? "admin" : "notAdmin"}`}>
+      <div
+        className={`roomActions ${isAdmin?.isAdmin ? "admin" : "notAdmin"} ${
+          hasFocus ? "focused" : ""
+        }`}
+      >
         <h2 className="heading">Room Actions</h2>
         <Formik
           initialValues={{
-            userNameOrEmail: "",
+            userName: "",
           }}
-          onSubmit={(values, e) => {
-            console.log(values);
+          onSubmit={async () => {
+            if (!isAddUserInputValueValid) {
+              return;
+            }
+
             addUserMutation({
               variables: {
-                emailOrUsernameTag: values.userNameOrEmail,
+                usernameTag: addUserInputValue,
                 // @ts-ignore not sure why but currentChat isn't a number
                 roomId: parseInt(currentChat, 10),
               },
+              refetchQueries: [
+                {
+                  query: LOAD_ROOM_QUERY,
+                  variables: {
+                    // @ts-ignore not sure why but currentChat isn't a number
+                    roomId: parseInt(currentChat, 10),
+                  },
+                },
+              ],
             });
           }}
         >
@@ -175,15 +277,20 @@ export const Participants = () => {
                       autoComplete="off"
                       placeholder="Enter a Username#0000"
                       onChange={handleAddUserInputChange}
+                      onFocus={() => setFocus(true)}
+                      onBlur={() => setFocus(false)}
                     />
-                    {addUserInputValue !== "" ? (
+                    {addUserInputValue !== "" && (
                       <div className="addUserInputHint inputText">
                         {getAddUserInput(addUserInputValue)}
                       </div>
-                    ) : (
-                      <></>
                     )}
                   </div>
+                  {addUserMutationData?.addUserToRoom?.statusCode !== 200 && (
+                    <div className="addUserStatus">
+                      {addUserMutationData?.addUserToRoom?.message}
+                    </div>
+                  )}
                   <button
                     type="submit"
                     className={`addUserButton ${
