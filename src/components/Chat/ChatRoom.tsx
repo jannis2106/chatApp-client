@@ -149,7 +149,6 @@ export const ChatRoom = () => {
 
   const deleteMessage = (messageId: number) => {
     return (e: React.MouseEvent) => {
-      console.log(typeof messageId);
       deleteMessageMutation({
         variables: {
           // @ts-ignore

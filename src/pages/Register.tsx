@@ -51,8 +51,6 @@ export const Register = () => {
     return <Redirect to="/" />;
   }
 
-  console.log(data);
-
   return (
     <div className="register">
       <h1>Register</h1>

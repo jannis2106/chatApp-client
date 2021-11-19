@@ -86,7 +86,6 @@ export const Profile: React.FC = () => {
             },
           });
           setCurrentAboutMe(values.aboutMe);
-          console.log(values);
         }}
       >
         {({ handleSubmit, values }) => (
