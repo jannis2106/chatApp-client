@@ -36,19 +36,18 @@
             justify-content: left
             position: relative
 
-            img, svg
-                height: 2.5em
+            .profileImage
                 width: 2.5em
                 border-radius: .7em
                 margin-right: .5em
                 cursor: pointer
 
             .userName 
-                font-size: 1em
+                font-size: 1rem
                 color: main.$text-color
 
             .aboutMe
-                font-size: .8em
+                font-size: .8rem
                 color: main.$text-color-50
 
             &::after
@@ -104,8 +103,6 @@
         background: rgba(0, 0, 0, 0.445)
         backdrop-filter: blur(10px)
         border: 2px transparent solid
-        background-clip: padding-box
-        -moz-background-clip: padding
         border-radius: 1em 1em 0 0
         padding: 1em 2em
         transition: .2s ease 1s
@@ -132,18 +129,18 @@
 
         .heading
             color: main.$text-color
-            font-size: 1em
+            font-size: 1rem
             text-align: center
             font-weight: 500
             padding-bottom: 1em
         
         .addUserLabel
             color: main.$text-color-50
-            font-size: .8em
+            font-size: .8rem
             cursor: pointer
 
             code
-                font-size: 1.2em
+                font-size: 1.2rem
 
         .addUserWrapper
             position: relative
@@ -184,7 +181,7 @@
                 z-index: 1
 
             .inputText
-                font-size: 1em
+                font-size: 1rem
                 font-weight: 400
                 letter-spacing: .04em
                 line-height: 20px

@@ -16,7 +16,7 @@ const PROFILE_PICTURE_QUERY = gql`
 export const Header = () => {
   const { data: profileImageData } = useQuery(PROFILE_PICTURE_QUERY);
   return (
-    <header className="application-header">
+    <header className="application-header" style={{ height: "5vh" }}>
       <div>
         <FontAwesomeIcon icon={faCommentDots} />
         <h1>Messaging</h1>

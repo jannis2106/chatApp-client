@@ -14,7 +14,7 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
   username,
 }) => {
   return (
-    <div className="profileImg">
+    <>
       {image ? (
         <img
           width="35px"
@@ -28,37 +28,33 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
       ) : (
         <UserImage username={username} />
       )}
-    </div>
+    </>
   );
 };
-
-// * NEXT: click on any profile picture || username to view the user profile detail and (list all common rooms // gibt keine privat chats) * //
 
 interface UserImageProps {
   username: string;
 }
 
 const UserImage: React.FC<UserImageProps> = ({ username }) => {
-  // const firstCharakter = username[0];
-
   if (!username) {
     return <GrayProfile />;
   }
 
   switch (username.charAt(0)) {
     case "a" || "b" || "c" || "d" || "e" || "f":
-      return <BlueProfile />;
+      return <BlueProfile className="profileImage" />;
 
     case "g" || "h" || "i" || "j" || "k" || "l":
-      return <GreenProfile />;
+      return <GreenProfile className="profileImage" />;
 
     case "m" || "n" || "o" || "p" || "q" || "r" || "s":
-      return <PinkProfile />;
+      return <PinkProfile className="profileImage" />;
 
     case "t" || "u" || "v" || "w" || "x" || "y" || "z":
-      return <GrayProfile />;
+      return <GrayProfile className="profileImage" />;
 
     default:
-      return <GreenProfile />;
+      return <GreenProfile className="profileImage" />;
   }
 };

@@ -6,7 +6,6 @@ import useStore from "../zustand/store";
 import { Redirect } from "react-router";
 import { Header } from "../components/Chat/Header";
 import { CreateRoom } from "../components/Chat/CreateRoom";
-// import { ChatSide } from "../components/Chat/ChatSide";
 
 export const Chat = () => {
   const loggedIn = useStore((state) => state.loggedIn);
@@ -24,7 +23,6 @@ export const Chat = () => {
         <AllChatRooms />
         {currentChat === 0 ? <div></div> : <ChatRoom />}
         {currentChat === 0 ? <div></div> : <Participants />}
-        {/* {currentChat === 0 ? <div></div> : <ChatSide />} */}
         {isCreateRoomVisible && <CreateRoom />}
       </div>
     </div>

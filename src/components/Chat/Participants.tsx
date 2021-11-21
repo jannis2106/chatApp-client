@@ -6,7 +6,6 @@ import { ProfileImage } from "../ProfileImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Mutations";
-// import client from "../../apollo/client";
 
 const LEAVE_ROOM_MUTATION = gql`
   mutation leaveRoom($roomId: Float!) {

@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { FormEvent, MouseEvent, useEffect } from "react";
+import React, { FormEvent, MouseEvent, useEffect, useRef } from "react";
 import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
 import client from "../../apollo/client";
@@ -107,6 +107,16 @@ export const ChatRoom = () => {
     }
   );
 
+  const today = new Date();
+
+  const returnDate = (date: Date) => {
+    let todayDate = today.toString().split("T")[0].split("-");
+    if (!date) return `${todayDate[1]}/${todayDate[2]}/${todayDate[0]}`;
+
+    let arr = date.toString().split("T")[0].split("-");
+    return `${arr[1]}/${arr[2]}/${arr[0]}`;
+  };
+
   useEffect(() => {
     subscribeToMore({
       document: MESSAGE_SUBSCRIPTION,
@@ -115,6 +125,8 @@ export const ChatRoom = () => {
       // @ts-ignore
       updateQuery: (prev: any, { subscriptionData }) => {
         if (!subscriptionData) return prev;
+
+        console.log(subscriptionData);
 
         return Object.assign({}, prev, {
           loadRoom: {
@@ -128,6 +140,8 @@ export const ChatRoom = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const chatBoxWrapper = useRef<HTMLDivElement>(null);
 
   // * handle send message button click * //
   let input: HTMLInputElement | null;
@@ -144,6 +158,10 @@ export const ChatRoom = () => {
         },
       });
       input!.value = "";
+    }
+
+    if (chatBoxWrapper?.current?.scrollHeight) {
+      chatBoxWrapper.current.scrollTop = chatBoxWrapper?.current?.scrollHeight;
     }
   };
 
@@ -205,33 +223,44 @@ export const ChatRoom = () => {
   return (
     <div className="chatRoom">
       <header>
-        <h1>{roomData?.room.name}</h1>
         <img
           src={roomData?.room.image ? `http://${roomData?.room.image}` : ""}
           alt=""
         />
+        <h1>{roomData?.room.name}</h1>
       </header>
-      <div>
-        {messagesData?.loadRoom?.messages.map((message: MessageInterface) => {
-          return (
-            <div key={message?.id}>
-              <ProfileImage
-                image={message?.user?.image}
-                username={message?.user?.username}
-              />
-              <p>{message?.user?.usernameTag}</p>
-              <p>{message?.messageContent}</p>
-              <span>{message?.date}</span>
-              {message?.user?.usernameTag === userData?.me?.usernameTag && (
-                <FontAwesomeIcon
-                  onClick={deleteMessage(message?.id)}
-                  icon={faTrash}
+      <div className="chatBoxWrapper" ref={chatBoxWrapper}>
+        <div className="chatBox">
+          {messagesData?.loadRoom?.messages.map((message: MessageInterface) => {
+            return (
+              <div key={message?.id} className="message">
+                <ProfileImage
+                  image={message?.user?.image}
+                  username={message?.user?.username}
                 />
-              )}
-            </div>
-          );
-        })}
+                <div className="messageRight">
+                  <p className="top">
+                    <span className="username">
+                      {message?.user?.usernameTag}{" "}
+                    </span>
+                    <span className="date">{returnDate(message?.date)}</span>
+                  </p>
+                  <p className="messageContent">{message?.messageContent}</p>
+                </div>
+                {message?.user?.usernameTag === userData?.me?.usernameTag && (
+                  <div className="deleteMessage">
+                    <FontAwesomeIcon
+                      onClick={deleteMessage(message?.id)}
+                      icon={faTrash}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -243,6 +272,7 @@ export const ChatRoom = () => {
             input = node;
           }}
           type="text"
+          placeholder="Write a message..."
         />{" "}
         <FontAwesomeIcon
           cursor="pointer"

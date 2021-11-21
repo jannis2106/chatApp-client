@@ -1,3 +1,157 @@
 @use "../../main" as main
 
-// rem for font size
+.chatRoom
+    width: 100%
+    position: relative
+    height: 95vh
+    display: flex
+    flex-direction: column
+
+    header
+        width: 35vw
+        display: flex
+        align-items: center
+        padding: 0 2em
+        margin: 2em 0
+        cursor: pointer
+        height: 10vh
+        z-index: 2
+
+        &:hover
+            img
+                border-radius: 1em
+
+            h1
+                padding-left: 1em
+
+        img
+            width: 5em
+            border-radius: .7em
+            transition: .2s ease
+
+        h1
+            padding-left: .5em
+            transition: .2s ease
+
+    .chatBoxWrapper
+        min-height: min-content
+        width: 100%
+        overflow-y: scroll
+        position: relative
+        padding-left: .7em
+        display: flex
+        flex-direction: column-reverse
+
+        &::-webkit-scrollbar
+            width: .7em
+
+        &::-webkit-scrollbar-track
+            background: transparent
+
+        &::-webkit-scrollbar-thumb
+            background: main.$blue
+            transition: .6s ease
+            border-radius: 10000px
+
+            &:hover
+                background: #8d8bff
+
+    .chatBox
+        display: flex
+        flex-direction: column
+
+        .message
+            width: 100%
+            display: flex
+            align-items: center
+            padding: .5em 2em
+            margin: .2em 0
+            transition: .2s ease
+            border-radius: .5em
+
+            &:hover
+                background: #00000023
+
+                .deleteMessage
+                    opacity: 1
+
+            .profileImage
+                width: 2.5em
+                border-radius: .7em
+                margin-right: .5em
+                align-self: flex-start
+                justify-self: flex-start
+                cursor: pointer
+
+            .messageRight
+                display: flex
+                flex-direction: column
+                justify-content: space-between
+                width: 70%
+
+                .top
+                    .username   
+                        color: main.$text-color
+                        cursor: pointer
+                    .date
+                        color: main.$text-color-50
+                        font-size: .8rem
+
+                .messageContent
+                    color: main.$text-color-50
+
+            .deleteMessage
+                background: main.$purple-bg
+                width: 2em
+                height: 2em
+                border-radius: .7em
+                display: flex
+                align-items: center
+                justify-content: center
+                cursor: pointer
+                transition: .2s ease
+                margin-left: auto
+                opacity: 0
+
+                &:hover
+                    background: main.$purple-bg
+                    filter: brightness(1.2)
+                    border-radius: .9em
+
+                svg
+                    color: main.$pink
+                    width: 1em
+                    height: 1em
+                    margin: 0
+
+    form
+        width: 100%
+        height: 10vh
+        min-height: 4em
+        padding: 0 2em
+        display: flex
+        align-items: center
+        margin-top: auto
+
+        input
+            background: transparent
+            border: rgba(255, 255, 255, 0.15) 2px solid
+            border-radius: 1em
+            color: rgba(255, 255, 255, .30)
+            padding: 1em
+            width: 100%
+            transition: .2s ease
+            font-size: 1rem
+
+            &:focus, &:active
+                outline: none
+                color: main.$text-color
+
+        svg
+            color: main.$pink
+            font-size: 1.5rem
+            transition: .2s ease
+            margin-left: 1em
+            
+            &:hover
+                transform: scale(1.2)
