@@ -5,7 +5,11 @@ import { ProfileImage } from "../ProfileImage";
 import client from "../../apollo/client";
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPaperPlane,
+  faTrash,
+  faRedoAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Mutations";
 
 const SEND_MESSAGE_MUTATION = gql`
@@ -21,6 +25,7 @@ const MESSAGE_SUBSCRIPTION = gql`
       user {
         id
         image
+        username
         usernameTag
       }
       date
@@ -98,7 +103,7 @@ export const ChatRoom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 
-  // * subscription * //
+  // * message subscription * //
   const { data: messagesData, subscribeToMore } = useQuery(
     LOAD_ROOM_MESSAGES_QUERY,
     {
@@ -107,8 +112,10 @@ export const ChatRoom = () => {
     }
   );
 
+  const chatBoxWrapper = useRef<HTMLDivElement>(null);
   const today = new Date();
 
+  // * returns date in MM/DD/YYYY format * //
   const returnDate = (date: Date) => {
     let todayDate = today.toString().split("T")[0].split("-");
     if (!date) return `${todayDate[1]}/${todayDate[2]}/${todayDate[0]}`;
@@ -117,6 +124,7 @@ export const ChatRoom = () => {
     return `${arr[1]}/${arr[2]}/${arr[0]}`;
   };
 
+  // * called once, subsribes for messages * //
   useEffect(() => {
     subscribeToMore({
       document: MESSAGE_SUBSCRIPTION,
@@ -125,8 +133,6 @@ export const ChatRoom = () => {
       // @ts-ignore
       updateQuery: (prev: any, { subscriptionData }) => {
         if (!subscriptionData) return prev;
-
-        console.log(subscriptionData);
 
         return Object.assign({}, prev, {
           loadRoom: {
@@ -140,8 +146,6 @@ export const ChatRoom = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const chatBoxWrapper = useRef<HTMLDivElement>(null);
 
   // * handle send message button click * //
   let input: HTMLInputElement | null;
@@ -160,11 +164,15 @@ export const ChatRoom = () => {
       input!.value = "";
     }
 
-    if (chatBoxWrapper?.current?.scrollHeight) {
-      chatBoxWrapper.current.scrollTop = chatBoxWrapper?.current?.scrollHeight;
+    if (chatBoxWrapper?.current) {
+      chatBoxWrapper?.current.scroll({
+        top: chatBoxWrapper?.current.scrollHeight + 100,
+        behavior: "smooth",
+      });
     }
   };
 
+  // * delete message * //
   const deleteMessage = (messageId: number) => {
     return (e: React.MouseEvent) => {
       deleteMessageMutation({
@@ -211,6 +219,25 @@ export const ChatRoom = () => {
     };
   };
 
+  // * if scrolled near bottom scroll down on new message * //
+  useEffect(() => {
+    if (chatBoxWrapper?.current) {
+      if (chatBoxWrapper?.current?.scrollTop >= -100) {
+        chatBoxWrapper?.current.scroll({
+          top: chatBoxWrapper?.current.scrollHeight + 100,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [messagesData?.loadRoom?.messages]);
+
+  // * reload chat room and refetch messages * //
+  const reloadRoom = async () => {
+    await client.refetchQueries({
+      include: [LOAD_ROOM_QUERY],
+    });
+  };
+
   // * LOAD_ROOM_QUERY is loading * //
   if (loading) {
     return (
@@ -223,11 +250,20 @@ export const ChatRoom = () => {
   return (
     <div className="chatRoom">
       <header>
-        <img
-          src={roomData?.room.image ? `http://${roomData?.room.image}` : ""}
-          alt=""
-        />
-        <h1>{roomData?.room.name}</h1>
+        <div className="roomInfos">
+          <img
+            src={roomData?.room.image ? `http://${roomData?.room.image}` : ""}
+            alt=""
+          />
+          <h1>{roomData?.room.name}</h1>
+        </div>
+        <div className="reloadChat">
+          <FontAwesomeIcon
+            cursor="pointer"
+            onClick={reloadRoom}
+            icon={faRedoAlt}
+          />
+        </div>
       </header>
       <div className="chatBoxWrapper" ref={chatBoxWrapper}>
         <div className="chatBox">
