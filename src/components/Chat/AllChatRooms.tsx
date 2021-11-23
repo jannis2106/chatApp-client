@@ -4,7 +4,7 @@ import { Redirect } from "react-router";
 import useStore from "../../zustand/store";
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const LOAD_ALL_ROOMS_QUERY = gql`
   query loadAllRooms {
@@ -41,6 +41,7 @@ export const AllChatRooms = () => {
   const setIsCreateRoomVisible = useStore(
     (state) => state.setIsCreateRoomVisible
   );
+  const isCreateRoomVisible = useStore((state) => state.isCreateRoomVisible);
 
   const forceRefreshValue = useStore((state) => state.forceRefreshValue);
 
@@ -66,10 +67,7 @@ export const AllChatRooms = () => {
       <header>
         <h1>Chats</h1>
 
-        <div>
-          <input type="text" />
-          <FontAwesomeIcon cursor="pointer" icon={faSearch} />
-
+        <div className={`createRoom ${isCreateRoomVisible ? "active" : ""}`}>
           <FontAwesomeIcon
             cursor="pointer"
             onClick={onCreateRoomClick}
@@ -77,21 +75,23 @@ export const AllChatRooms = () => {
           />
         </div>
       </header>
-      {rooms?.map((room: roomInterface) => (
-        <div
-          className="roomPreview"
-          // * use this key (or just the room.id to query a specific room)
-          key={room.id}
-          onClick={onChatClick(room.id)}
-        >
-          <img
-            src={room.image ? `http://${room.image}` : ""}
-            width="100px"
-            alt=""
-          />
-          <h1>{room.name}</h1>
-        </div>
-      ))}
+      <div className="roomsList">
+        {rooms?.map((room: roomInterface) => (
+          <div
+            className="roomPreview"
+            // * use this key (or just the room.id to query a specific room)
+            key={room.id}
+            onClick={onChatClick(room.id)}
+          >
+            <img
+              src={room.image ? `http://${room.image}` : ""}
+              width="100px"
+              alt=""
+            />
+            <h1>{room.name}</h1>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

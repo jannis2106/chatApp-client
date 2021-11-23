@@ -22,3 +22,17 @@ $error: #B82C3A
         position: center bottom
         size: cover
     overflow: hidden
+
+@mixin buttonClickAnimation($name)
+    @keyframes #{$name}
+        0%
+            transform: scale(1)
+
+        25%
+            transform: scale(.8)        
+
+        75%
+            transform: scale(1.1)
+
+        100%
+            transform: scale(1)

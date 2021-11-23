@@ -1,5 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { FormEvent, MouseEvent, useEffect, useRef } from "react";
+import React, {
+  FormEvent,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
 import client from "../../apollo/client";
@@ -231,8 +237,14 @@ export const ChatRoom = () => {
     }
   }, [messagesData?.loadRoom?.messages]);
 
+  const [reloading, setReloading] = useState(false);
+
   // * reload chat room and refetch messages * //
   const reloadRoom = async () => {
+    setReloading(true);
+    setTimeout(() => {
+      setReloading(false);
+    }, 1000);
     await client.refetchQueries({
       include: [LOAD_ROOM_QUERY],
     });
@@ -257,11 +269,12 @@ export const ChatRoom = () => {
           />
           <h1>{roomData?.room.name}</h1>
         </div>
-        <div className="reloadChat">
+        <div className={`reloadChat ${reloading ? "reloading" : ""}`}>
           <FontAwesomeIcon
             cursor="pointer"
             onClick={reloadRoom}
             icon={faRedoAlt}
+            className={reloading ? "reloading" : ""}
           />
         </div>
       </header>
