@@ -8,12 +8,13 @@
     width: 20em
     min-width: 20em
     max-width: 20em
+    background: rgba(0, 0, 0, .2)
 
     header
         display: flex
         align-items: center
         justify-content: space-between
-        padding: 1em
+        padding: 2em
 
         h1
             font-size: 1.5rem
@@ -27,7 +28,7 @@
             align-items: center
             justify-content: center
             margin-left: auto
-            margin-right: 2em
+            // margin-right: 2em
             cursor: pointer
             transition: .2s ease
             &.active
@@ -47,7 +48,7 @@
 
     .roomsList
         overflow-y: scroll
-        height: calc( 95vh  - 4em)
+        height: calc( 100vh  - 4em - 5em)
         margin-bottom: 3vh
 
         &::-webkit-scrollbar
@@ -62,7 +63,7 @@
             border-radius: 10000px
 
         .roomPreview
-            margin: .5em
+            margin: 0.5em 1em
             padding: 1em
             display: flex
             align-items: center
@@ -72,12 +73,9 @@
             &:hover
                 background: rgba(0, 0, 0, .15)
 
-            &:first-of-type
-                margin-top: 1em
-
-            img
+            .roomImage
                 border-radius: .7em
-                width: 4em
+                width: 3.5em
 
             h1
                 margin-left: .5em

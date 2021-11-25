@@ -3,7 +3,8 @@
 
 .chatSideDetail
     padding-left: 2em
-    width: 25em
+    width: 28em
+    background: rgba(0, 0, 0, .2)
 
     .user
         overflow-y: scroll
@@ -53,12 +54,13 @@
             &::after
                 content: ""
                 width: 100%
-                height: 2px
+                height: 3px
                 background: main.$text-color
                 opacity: main.$opacity-15
                 position: absolute
                 bottom: -1.5em
                 right: 0
+                border-radius: 20000px
 
             &:last-child
                 margin-bottom: 0
@@ -111,10 +113,10 @@
             height: 20em 
             transform: translateY(17em) 
             &:hover 
-                transform: translateY(3em) 
+                transform: translateY(5em) 
                 transition: .2s ease 
             &.focused
-                transform: translateY(3em) 
+                transform: translateY(5em) 
                 transition: .2s ease 
 
         &.notAdmin
@@ -199,7 +201,7 @@
 
 
         .addUserButton
-            margin: 1em 0
+            margin-top: 1em
             opacity: .5
 
             &.valid

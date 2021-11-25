@@ -38,7 +38,7 @@ interface UserImageProps {
 
 const UserImage: React.FC<UserImageProps> = ({ username }) => {
   if (!username) {
-    return <GrayProfile />;
+    return <GrayProfile className="profileImage" />;
   }
 
   switch (username.charAt(0)) {

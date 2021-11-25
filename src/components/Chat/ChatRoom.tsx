@@ -269,10 +269,12 @@ export const ChatRoom = () => {
           />
           <h1>{roomData?.room.name}</h1>
         </div>
-        <div className={`reloadChat ${reloading ? "reloading" : ""}`}>
+        <div
+          className={`reloadChat ${reloading ? "reloading" : ""}`}
+          onClick={reloadRoom}
+        >
           <FontAwesomeIcon
             cursor="pointer"
-            onClick={reloadRoom}
             icon={faRedoAlt}
             className={reloading ? "reloading" : ""}
           />

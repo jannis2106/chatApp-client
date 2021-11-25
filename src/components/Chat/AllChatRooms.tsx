@@ -5,6 +5,7 @@ import useStore from "../../zustand/store";
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { ReactComponent as GrayProfile } from "../../sass/images/profile_gray.svg";
 
 const LOAD_ALL_ROOMS_QUERY = gql`
   query loadAllRooms {
@@ -67,27 +68,30 @@ export const AllChatRooms = () => {
       <header>
         <h1>Chats</h1>
 
-        <div className={`createRoom ${isCreateRoomVisible ? "active" : ""}`}>
-          <FontAwesomeIcon
-            cursor="pointer"
-            onClick={onCreateRoomClick}
-            icon={faPlus}
-          />
+        <div
+          className={`createRoom ${isCreateRoomVisible ? "active" : ""}`}
+          onClick={onCreateRoomClick}
+        >
+          <FontAwesomeIcon cursor="pointer" icon={faPlus} />
         </div>
       </header>
       <div className="roomsList">
         {rooms?.map((room: roomInterface) => (
           <div
             className="roomPreview"
-            // * use this key (or just the room.id to query a specific room)
             key={room.id}
             onClick={onChatClick(room.id)}
           >
-            <img
-              src={room.image ? `http://${room.image}` : ""}
-              width="100px"
-              alt=""
-            />
+            {room.image ? (
+              <img
+                src={`http://${room.image}`}
+                width="100px"
+                alt=""
+                className="roomImage"
+              />
+            ) : (
+              <GrayProfile className="roomImage" />
+            )}
             <h1>{room.name}</h1>
           </div>
         ))}
