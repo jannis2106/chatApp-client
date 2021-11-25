@@ -1,0 +1,53 @@
+@use "../../main" as main
+    
+.applicationHeader
+    padding: 0 4em
+    display: flex
+    align-items: center
+    justify-content: space-between
+    height: 5em
+    background: rgba(0, 0, 0, .3)
+
+    .leftHeader
+        height: 5em
+        display: flex
+        align-items: center
+
+        .logo
+            width: 3em
+
+        h1
+            color: main.$text-color
+            padding-left: 1em
+            font-weight: 500
+
+    .rightHeader
+        display: flex
+        align-items: center
+        margin-left: 1em
+
+        input
+            background: main.$blue
+            opacity: .8
+            border: none
+            padding: .5em
+            border-radius: .5em
+            color: main.$text-color
+            transition: .2s ease
+
+            &:active, &:focus
+                outline: none 
+                opacity: 1
+
+            &::placeholder
+                color: rgba(255, 255, 255, .75)
+
+        .searchIcon
+            color: main.$text-color
+            margin: 0 2em 0 1em
+            cursor: pointer
+
+        .profileImage
+            border-radius: .5em
+            width: 2.5em
+            cursor: pointer

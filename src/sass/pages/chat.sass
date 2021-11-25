@@ -2,29 +2,18 @@
 @import "./chat/chatSideDetail"
 @import "./chat/chatRoom"
 @import "./chat/allChatRooms"
+@import "./chat/header"
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap')
-
-.application-header 
-    display: flex
 
 .application
     @include main.backgroundImage
     font-family: 'Roboto', sans-serif
 
-@mixin tempboxes
-    border: 1px solid #ffffff26
 
 .chat
     display: flex
-    @include tempboxes
-    
+
     h1
         color: main.$text-color
         font-weight: 400
-    
-.roomList
-    @include tempboxes
-
-.chatRoom
-    @include tempboxes
 

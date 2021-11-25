@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { ProfileImage } from "../ProfileImage";
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCommentDots, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { ReactComponent as Logo } from "../../sass/images/logo.svg";
 
 const PROFILE_PICTURE_QUERY = gql`
   query profileImage {
@@ -16,15 +17,15 @@ const PROFILE_PICTURE_QUERY = gql`
 export const Header = () => {
   const { data: profileImageData } = useQuery(PROFILE_PICTURE_QUERY);
   return (
-    <header className="application-header" style={{ height: "5vh" }}>
-      <div>
-        <FontAwesomeIcon icon={faCommentDots} />
+    <header className="applicationHeader">
+      <div className="leftHeader">
+        <Logo className="logo" />
         <h1>Messaging</h1>
       </div>
 
-      <div>
+      <div className="rightHeader">
         <input type="text" placeholder="Search" />
-        <FontAwesomeIcon cursor="pointer" icon={faSearch} />
+        <FontAwesomeIcon icon={faSearch} className="searchIcon" />
 
         <Link to="/profile">
           <ProfileImage
