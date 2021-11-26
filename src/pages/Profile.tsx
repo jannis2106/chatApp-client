@@ -3,6 +3,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import { Header } from "../components/Header";
+import { Loading } from "../components/Loading";
 
 const LOAD_USER_PROFILE_QUERY = gql`
   query loadUserProfile {
@@ -24,7 +25,7 @@ const CHANGE_ABOUT_ME_MUTATION = gql`
 `;
 
 export const Profile: React.FC = () => {
-  const { data } = useQuery(LOAD_USER_PROFILE_QUERY);
+  const { data, loading } = useQuery(LOAD_USER_PROFILE_QUERY);
   const [changeAboutMe] = useMutation(CHANGE_ABOUT_ME_MUTATION);
 
   const [currentAboutMe, setCurrentAboutMe] = useState("");
@@ -58,6 +59,8 @@ export const Profile: React.FC = () => {
   if (aboutMeRef.current && userData?.aboutMe) {
     aboutMeRef.current.value = userData?.aboutMe;
   }
+
+  if (loading) return <Loading />;
 
   return (
     <div className="profile">

@@ -5,7 +5,8 @@ import { Register } from "./pages/Register";
 import { Chat } from "./pages/Chat";
 import { Profile } from "./pages/Profile";
 import { CreateRoom } from "./components/Chat/CreateRoom";
-import "./sass/main.sass"
+import "./sass/main.sass";
+import { Loading } from "./components/Loading";
 
 const App = () => {
   return (
@@ -33,6 +34,11 @@ const App = () => {
       <Switch>
         <Route path="/createRoom">
           <CreateRoom />
+        </Route>
+      </Switch>
+      <Switch>
+        <Route path="/test">
+          <Loading />
         </Route>
       </Switch>
     </Router>

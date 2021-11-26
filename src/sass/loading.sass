@@ -1,0 +1,22 @@
+@use "./main.sass" as main
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap')
+
+
+.loading
+    display: flex
+    align-items: center
+    justify-content: center
+    @include main.backgroundImage
+
+.loadingContainer
+    display: flex
+    justify-content: center
+    align-items: flex-end
+
+    .loadingCircle
+        display: block
+        background: rgba(222, 112, 226, 0.6)
+        width: 1em
+        height: 1em
+        border-radius: 50%
+        margin: .2em

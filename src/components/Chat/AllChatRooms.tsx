@@ -6,6 +6,7 @@ import useStore from "../../zustand/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ReactComponent as GrayProfile } from "../../sass/images/profile_gray.svg";
+import { Loading } from "../Loading";
 
 const LOAD_ALL_ROOMS_QUERY = gql`
   query loadAllRooms {
@@ -29,7 +30,7 @@ const useForceUpdate = () => {
 };
 
 export const AllChatRooms = () => {
-  const { data } = useQuery(LOAD_ALL_ROOMS_QUERY);
+  const { data, loading } = useQuery(LOAD_ALL_ROOMS_QUERY);
 
   // * switch chat rooms * //
   const changeCurrentChat = useStore((state) => state.changeCurrentChat);
@@ -62,6 +63,8 @@ export const AllChatRooms = () => {
   }
 
   let rooms = data?.loadAllRooms;
+
+  if (loading) return <Loading />;
 
   return (
     <div className="roomList">

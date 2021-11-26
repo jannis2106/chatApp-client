@@ -17,6 +17,7 @@ import {
   faRedoAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Mutations";
+import { Loading } from "../Loading";
 
 const SEND_MESSAGE_MUTATION = gql`
   mutation sendMessage($roomId: Float!, $message: String!) {
@@ -251,13 +252,7 @@ export const ChatRoom = () => {
   };
 
   // * LOAD_ROOM_QUERY is loading * //
-  if (loading) {
-    return (
-      <div>
-        <p>loading ...</p>
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
 
   return (
     <div className="chatRoom">
