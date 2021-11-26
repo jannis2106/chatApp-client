@@ -4,7 +4,7 @@ import { ChatRoom } from "../components/Chat/ChatRoom";
 import { Participants } from "../components/Chat/Participants";
 import useStore from "../zustand/store";
 import { Redirect } from "react-router";
-import { Header } from "../components/Chat/Header";
+import { Header } from "../components/Header";
 import { CreateRoom } from "../components/Chat/CreateRoom";
 
 export const Chat = () => {
@@ -18,7 +18,7 @@ export const Chat = () => {
 
   return (
     <div className="application">
-      <Header />
+      <Header route={"Messaging"} />
       <div className="chat">
         <AllChatRooms />
         {currentChat === 0 ? <div></div> : <ChatRoom />}
