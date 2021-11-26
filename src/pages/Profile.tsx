@@ -1,7 +1,8 @@
+import "../sass/pages/profile.sass";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
+import { Header } from "../components/Header";
 
 const LOAD_USER_PROFILE_QUERY = gql`
   query loadUserProfile {
@@ -60,54 +61,68 @@ export const Profile: React.FC = () => {
 
   return (
     <div className="profile">
-      <Link to="/">
-        <button>
-          <h1> &lt; </h1> {/* &lt; = "<" */}
-        </button>
-      </Link>
-      <h1>Profile</h1>
-      <div>
-        <img src={userData?.image ? `http://${userData.image}` : ""} alt="" />
-        <h3>
-          {userData?.username}
-          <i> #{userData?.tag}</i>
-        </h3>
-      </div>
+      <Header route={"Profile"} />
 
-      <Formik
-        initialValues={{
-          aboutMe: userData?.aboutMe || "",
-        }}
-        enableReinitialize={true}
-        onSubmit={(values) => {
-          changeAboutMe({
-            variables: {
-              aboutMe: values.aboutMe,
-            },
-          });
-          setCurrentAboutMe(values.aboutMe);
-        }}
-      >
-        {({ handleSubmit, values }) => (
-          <Form onSubmit={handleSubmit}>
-            <Field name="aboutMe" type="text" id="aboutMe" />
-            <button
-              type="submit"
-              disabled={values.aboutMe === currentAboutMe ? true : false}
-            >
-              Save Changes
-            </button>
-          </Form>
-        )}
-      </Formik>
+      <div className="userProfile">
+        <div className="profileDetails">
+          <img
+            src={userData?.image ? `http://${userData.image}` : ""}
+            alt=""
+            className="profileImage"
+          />
+          <h3 className="userName">
+            {userData?.username}
+            <i className="tag"> #{userData?.tag}</i>
+          </h3>
+          <p className="email">{userData?.email}</p>
+        </div>
 
-      {/* <input type="text" ref={aboutMeRef} onSubmit={changeAboutMe({variables: {aboutMe: aboutMeRef.current ? aboutMeRef.current.value : ""}})}/> */}
+        <div className="profileExtras">
+          <Formik
+            initialValues={{
+              aboutMe: userData?.aboutMe || "",
+            }}
+            enableReinitialize={true}
+            onSubmit={(values) => {
+              changeAboutMe({
+                variables: {
+                  aboutMe: values.aboutMe,
+                },
+              });
+              setCurrentAboutMe(values.aboutMe);
+            }}
+          >
+            {({ handleSubmit, values }) => (
+              <Form onSubmit={handleSubmit}>
+                <Field
+                  as="textarea"
+                  name="aboutMe"
+                  type="text"
+                  id="aboutMe"
+                  className="changeAbout"
+                  autocomplete="off"
+                />
+                <button
+                  type="submit"
+                  disabled={values.aboutMe === currentAboutMe ? true : false}
+                  className={`changeAboutButton ${
+                    values.aboutMe !== currentAboutMe ? "valid" : ""
+                  }`}
+                >
+                  Save Changes
+                </button>
+              </Form>
+            )}
+          </Formik>
 
-      <p>{userData?.email}</p>
-      <div>
-        <h3>Account age:</h3>
-        {accountAgeDetailed.years && <p>Years: {accountAgeDetailed.years}</p>}
-        <p>Days: {accountAgeDetailed.days}</p>
+          <div className="accountAge">
+            <h3>Account age:</h3>
+            {accountAgeDetailed.years && (
+              <p>Years: {accountAgeDetailed.years}</p>
+            )}
+            <p>Days: {accountAgeDetailed.days}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
