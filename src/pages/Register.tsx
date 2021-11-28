@@ -1,42 +1,13 @@
 import { gql, useMutation } from "@apollo/client";
 import { Formik, Form, Field } from "formik";
 import { Redirect } from "react-router";
+import { Link } from "react-router-dom";
 import { Loading } from "../components/Loading";
 import useStore from "../zustand/store";
-
-const validateUsername = (value: string) => {
-  let error;
-
-  if (value.length > 20) {
-    error = "Username is too long";
-  }
-
-  return error;
-};
-
-const validateEmail = (value: string) => {
-  let error;
-
-  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-    error = "Invalid email address";
-  }
-
-  return error;
-};
-
-const validatePassword = (value: string) => {
-  let error;
-
-  if (value.length < 8) {
-    error = "Your password is too short";
-  } else if (value.search(/\d/) === -1) {
-    error = "Your password must contain at least one number";
-  } else if (value.search(/[a-zA-Z]/) === -1) {
-    error = "Your password must contain at least one letter";
-  }
-
-  return error;
-};
+import { ReactComponent as Logo } from "../sass/images/logo.svg";
+import "../sass/pages/register.sass";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 const REGISTER_MUTATION = gql`
   mutation ($data: RegisterInput!) {
@@ -49,10 +20,52 @@ const REGISTER_MUTATION = gql`
 export const Register = () => {
   const [registerMutation, { data }] = useMutation(REGISTER_MUTATION);
   const loggedIn = useStore((state) => state.loggedIn);
+  const setLoggedIn = useStore((state) => state.setLoggedIn);
 
-  console.log(loggedIn);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+  const onUsernameChange = (e: React.FormEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value.length > 20) {
+      return;
+    }
+    setUsernameInput(e.currentTarget.value);
+
+    if (e.currentTarget.value !== "") {
+      setIsUsernameValid(true);
+    } else {
+      setIsUsernameValid(false);
+    }
+  };
+
+  const onEmailChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setEmailInput(e.currentTarget.value);
+
+    if (
+      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(e.currentTarget.value)
+    ) {
+      setIsEmailValid(true);
+    } else {
+      setIsEmailValid(false);
+    }
+  };
+
+  const onPasswordChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setPasswordInput(e.currentTarget.value);
+
+    if (e.currentTarget.value.length >= 8) {
+      setIsPasswordValid(true);
+    } else {
+      setIsPasswordValid(false);
+    }
+  };
 
   if (data?.register || loggedIn === true) {
+    setLoggedIn(true);
     return <Redirect to="/" />;
   }
 
@@ -60,72 +73,132 @@ export const Register = () => {
     return <Loading />;
   }
 
-  if (loggedIn === false)
-    return (
-      <div className="register">
+  const dropIn = {
+    hidden: {
+      transform: "translateY(-100vh)",
+      opacity: 0,
+    },
+    visible: {
+      transform: "translateY(0vh)",
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 25,
+        stiffness: 500,
+      },
+    },
+    exit: {
+      y: "800px",
+      opacity: 0,
+    },
+  };
+
+  return (
+    <div className="register">
+      <motion.div
+        className="registerContainer"
+        drag
+        dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
+        dragPropagation={true}
+        dragElastic={0.5}
+        variants={dropIn}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
         <h1>Register</h1>
-        <Formik
-          initialValues={{
-            username: "",
-            email: "",
-            password: "",
-          }}
-          onSubmit={(values, { resetForm }) => {
-            registerMutation({
-              variables: {
-                data: values,
-              },
-            });
-            resetForm();
-          }}
-        >
-          {({ errors, touched }) => (
-            <Form>
-              <label htmlFor="username">Username</label>
-              <Field
-                name="username"
-                type="text"
-                validate={validateUsername}
-                id="username"
-              />{" "}
-              {errors.username && touched.username && (
-                <div>{errors.username}</div>
-              )}{" "}
-              <br />
-              {/*  */}
-              <label htmlFor="email">Email</label>
-              <Field
-                name="email"
-                type="email"
-                validate={validateEmail}
-                id="email"
-              />{" "}
-              {errors.email && touched.email && <div>{errors.email}</div>}{" "}
-              <br />
-              {data?.register === null ? (
-                <div>Account with this email already exists</div>
-              ) : (
-                <div></div>
-              )}
-              {/*  */}
-              <label htmlFor="password">Password</label>
-              <Field
-                name="password"
-                type="password"
-                validate={validatePassword}
-                id="password"
-              />{" "}
-              <br />
-              {errors.password && touched.password && (
-                <div>{errors.password}</div>
-              )}{" "}
-              <br />
-              {/*  */}
-              <button type="submit">Login</button>
-            </Form>
-          )}
-        </Formik>
-      </div>
-    );
-  else return <Redirect to="/" />;
+        <div className="content">
+          <Formik
+            initialValues={{
+              username: "",
+              email: "",
+              password: "",
+            }}
+            onSubmit={async () => {
+              console.log("button click");
+              registerMutation({
+                variables: {
+                  data: {
+                    username: usernameInput,
+                    email: emailInput,
+                    password: passwordInput,
+                  },
+                },
+              });
+            }}
+          >
+            {({ handleSubmit, isSubmitting, errors, touched }) => (
+              <Form onSubmit={handleSubmit}>
+                <label htmlFor="username">Username</label>
+                <div className="inputWrapper">
+                  <Field
+                    value={usernameInput}
+                    onChange={onUsernameChange}
+                    name="username"
+                    type="text"
+                    // validate={validateUsername}
+                    id="username"
+                  />
+                </div>
+                <label htmlFor="email">Email</label>
+                <div className="inputWrapper">
+                  <Field
+                    value={emailInput}
+                    onChange={onEmailChange}
+                    name="email"
+                    type="email"
+                    // validate={validateEmail}
+                    id="email"
+                  />
+                </div>
+                {/* {data?.register === null ? (
+                    <div>Account with this email already exists</div>
+                  ) : (
+                    <div></div>
+                  )} */}
+                {/*  */}
+                <label htmlFor="password">Password</label>
+                <div className="inputWrapper">
+                  <Field
+                    value={passwordInput}
+                    onChange={onPasswordChange}
+                    name="password"
+                    type="password"
+                    // validate={validatePassword}
+                    id="password"
+                  />
+                </div>
+
+                {/* {errors.password && touched.password && (
+                    <div>{errors.password}</div>
+                  )}{" "} */}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={
+                    isUsernameValid && isEmailValid && isPasswordValid
+                      ? "valid"
+                      : ""
+                  }
+                >
+                  Login
+                </button>
+                <p className="createAccount">
+                  Already have an account?{" "}
+                  <Link className="link" to="/login">
+                    Log in here
+                  </Link>
+                </p>
+              </Form>
+            )}
+          </Formik>
+          <div className="rightSide">
+            <Logo />
+            <h1>Chat Application</h1>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
 };

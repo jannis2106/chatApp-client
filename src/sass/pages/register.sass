@@ -1,0 +1,105 @@
+@use "../main.sass" as main
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap')
+    
+.register
+    display: flex
+    align-items: center
+    justify-content: center
+    height: 100vh
+    font-family: 'Roboto', sans-serif
+    color: main.$text-color
+
+.registerContainer
+    background: #00000033
+    padding: 3em
+    border-radius: 1em
+    box-shadow: 10px 10px 25px 0px rgba(0,0,0,0.3), 10px 10px 40px 0px rgba(0,0,0,0.15)
+
+    h1
+        font-weight: 500
+
+    .content
+        display: flex
+        flex-wrap: wrap
+        // background: brown
+
+        form
+            // background: green
+            width: 50%            
+            padding: 2em 1em 1em 0    
+
+            label
+                cursor: pointer
+
+            .inputWrapper
+                display: flex
+                width: 100%
+                align-items: center
+                border: 1px #000000aa solid
+                background: #00000033
+                padding: 0 1em
+                transition: .2s ease
+                margin: .5em 0 1em 0
+
+                &:focus-within, &:active
+                    outline: none
+                    border-radius: 1em
+                    border: 1px main.$pink solid
+
+                input
+                    background: transparent
+                    width: 25em
+                    height: 3em
+                    padding: 1em 0
+                    z-index: 12
+                    color: main.$text-color
+                    border: none
+                    font-family: 'Roboto', sans-serif
+                    &:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active
+                        -webkit-box-shadow: 0 0 0 30px #1e1c2e inset !important
+                        -webkit-text-fill-color: main.$text-color-50 !important
+                        // background: transparent !important
+
+                    &:focus, &:active
+                        outline: none
+
+            button
+                height: 3em
+                width: 10em
+                background: main.$pink
+                border-radius: .6em
+                border: none
+                color: main.$text-color
+                font-weight: 600
+                transition: .2s ease
+                opacity: .5
+
+                &.valid
+                    cursor: pointer
+                    opacity: 1
+
+                    &:hover
+                        filter: brightness(1.2)
+
+            .createAccount
+                margin-top: 2em
+                 
+                .link
+                    color: main.$blue
+                    text-decoration: none
+                    
+
+        .rightSide
+            width: 50%
+            display: flex
+            align-items: center
+            justify-content: center
+            flex-direction: column
+
+            svg
+                width: 50%
+                filter: drop-shadow(10px 10px 25px#0000004b)
+
+            h1
+                margin-top: 1em
+                text-align: center
