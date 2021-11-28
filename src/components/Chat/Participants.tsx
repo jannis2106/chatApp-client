@@ -5,7 +5,10 @@ import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
-import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Mutations";
+import {
+  LOAD_ALL_ROOMS_QUERY,
+  LOAD_ROOM_QUERY,
+} from "../../apollo/graphql/Queries";
 
 const LEAVE_ROOM_MUTATION = gql`
   mutation leaveRoom($roomId: Float!) {
@@ -44,12 +47,18 @@ export const Participants = () => {
   const participants = useStore((state) => state.participants);
   const admins = useStore((state) => state.admins);
   const currentChat = useStore((state) => state.currentChat);
+  const changeCurrentChat = useStore((state) => state.changeCurrentChat);
 
   const [leaveRoomMutation] = useMutation(LEAVE_ROOM_MUTATION, {
     variables: {
       // @ts-ignore not sure why but currentChat isn't a number
       roomId: parseInt(currentChat, 10),
     },
+    refetchQueries: [
+      {
+        query: LOAD_ALL_ROOMS_QUERY,
+      },
+    ],
   });
   const [addUserMutation, { data: addUserMutationData }] =
     useMutation(ADD_USER_MUTATION);
@@ -68,6 +77,7 @@ export const Participants = () => {
     useState(false);
 
   const leaveRoom = () => {
+    changeCurrentChat(0);
     leaveRoomMutation();
   };
 
@@ -265,8 +275,6 @@ export const Participants = () => {
     </div>
   );
 };
-
-// add Formik validation to the form add User
 
 interface UserCardProps {
   id: number;

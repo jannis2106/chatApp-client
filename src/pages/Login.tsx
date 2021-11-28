@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Redirect } from "react-router";
 import useStore from "../zustand/store";
@@ -19,23 +19,41 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const LOGGED_IN_QUERY = gql`
-  query loggedIn {
-    loggedIn
-  }
-`;
+// const LOGGED_IN_QUERY = gql`
+//   query loggedIn {
+//     loggedIn
+//   }
+// `;
 
 export const Login = () => {
-  const { data: loggedInData } = useQuery(LOGGED_IN_QUERY);
-  const [loginMutation, { data }] = useMutation(LOGIN_MUTATION);
+  // const { data: loggedInData } = useQuery(LOGGED_IN_QUERY);
+  const [loginMutation, { data: loginMutationData }] =
+    useMutation(LOGIN_MUTATION);
   const loggedIn = useStore((state) => state.loggedIn);
   const setLoggedIn = useStore((state) => state.setLoggedIn);
+  console.log("0");
 
-  if (loggedIn || loggedInData?.loggedIn || data?.login) {
+  // const [canRedirect, setCanRedirect] = useState(false);
+
+  if (loggedIn) {
+    console.log("2");
+    console.log(loggedIn);
+    // setCanRedirect(true);
+    return <Redirect to="/" />;
+  }
+
+  if (loginMutationData?.login) {
+    console.log("1");
     setLoggedIn(true);
     return <Redirect to="/" />;
   }
 
+  // if (canRedirect) {
+  //   console.log("3");
+  //   return <Redirect to="/" />;
+  // }
+
+  // if (loggedIn === false)
   return (
     <div className="login">
       <h1>Login</h1>
@@ -74,4 +92,5 @@ export const Login = () => {
       </Formik>
     </div>
   );
+  // else return <Redirect to="/" />;
 };

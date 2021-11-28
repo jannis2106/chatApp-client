@@ -1,10 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
 import { Field, Formik } from "formik";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useStore from "../../zustand/store";
-// icons
+import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { LOAD_ALL_ROOMS_QUERY } from "../../apollo/graphql/Queries";
 
 const CREATE_ROOM_MUTATION = gql`
   mutation createRoom($name: String!) {
@@ -19,12 +20,9 @@ export const CreateRoom: React.FC = () => {
     (state) => state.setIsCreateRoomVisible
   );
 
-  const setForceRefreshValue = useStore((state) => state.setForceRefreshValue);
-
   useEffect(() => {
     if (data && data.createRoom) {
       setIsCreateRoomVisible(false); // close window
-      setForceRefreshValue(); // force refresh of AllChatRooms to display the new Room
     }
     if (data && data.createRoom === false) {
       setIsCreateRoomVisible(true); // keep window visible
@@ -36,47 +34,107 @@ export const CreateRoom: React.FC = () => {
     setIsCreateRoomVisible(false);
   };
 
+  const [isInputValid, setIsInputValid] = useState(false);
+  const [createRoomValue, setCreateRoomValue] = useState("");
+
+  const validateInput = (e: any) => {
+    setCreateRoomValue(e.target.value);
+
+    console.log(e);
+    console.log(e.target.value);
+
+    if (e.target.value !== "") {
+      setIsInputValid(true);
+    } else {
+      setIsInputValid(false);
+    }
+  };
+
+  const dropIn = {
+    hidden: {
+      transform: "translateY(-100vh)",
+      opacity: 0,
+    },
+    visible: {
+      transform: "translateY(0vh)",
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 25,
+        stiffness: 500,
+      },
+    },
+    exit: {
+      y: "800px",
+      opacity: 0,
+    },
+  };
+
   return (
-    <div
-      style={{
-        zIndex: 100,
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        height: "50vh",
-        width: "50vw",
-        border: "3px black solid",
-        boxShadow: "5 5 5 5 black",
-        background: "white",
-      }}
-    >
-      <h1>Create Chat Room</h1>
-
-      <Formik
-        initialValues={{
-          roomName: "",
-        }}
-        onSubmit={(values) => {
-          createRoomMutation({
-            variables: {
-              name: values.roomName,
-            },
-          });
-        }}
+    <div className="createRoomWrapper">
+      <motion.div
+        className="createRoomDiv"
+        drag
+        dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
+        dragPropagation={true}
+        dragElastic={0.7}
+        variants={dropIn}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
       >
-        {({ handleSubmit, isSubmitting }) => (
-          <form action="submit" onSubmit={handleSubmit}>
-            <label htmlFor="roomName">Room Name</label>
-            <Field name="roomName" type="text" id="roomName"></Field>
-            <button type="submit" disabled={isSubmitting}>
-              Create Room
-            </button>
-          </form>
-        )}
-      </Formik>
+        <h1>Create Chat Room</h1>
 
-      <FontAwesomeIcon onClick={closeWindow} icon={faTimes} />
+        <Formik
+          initialValues={{
+            roomName: "",
+          }}
+          onSubmit={async () => {
+            if (!isInputValid) {
+              return;
+            }
+            createRoomMutation({
+              variables: {
+                name: createRoomValue,
+              },
+              refetchQueries: [
+                {
+                  query: LOAD_ALL_ROOMS_QUERY,
+                },
+              ],
+            });
+          }}
+        >
+          {({ handleSubmit, isSubmitting }) => (
+            <form action="submit" onSubmit={handleSubmit}>
+              <label htmlFor="roomName">Room Name</label> <br />
+              <div className="roomNameWrapper">
+                <Field
+                  name="roomName"
+                  value={createRoomValue}
+                  type="text"
+                  id="roomName"
+                  className="roomNameInput"
+                  autocomplete="off"
+                  onChange={validateInput}
+                />
+                <br />
+              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`createRoomButon ${isInputValid ? "valid" : ""}`}
+              >
+                Create Room
+              </button>
+            </form>
+          )}
+        </Formik>
+
+        <div className="closeWindow" onClick={closeWindow}>
+          <FontAwesomeIcon icon={faTimes} />
+        </div>
+      </motion.div>
     </div>
   );
 };

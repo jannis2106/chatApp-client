@@ -1,9 +1,12 @@
 import "../sass/pages/profile.sass";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import { Header } from "../components/Header";
 import { Loading } from "../components/Loading";
+import { motion } from "framer-motion";
+import { Redirect } from "react-router-dom";
+import useStore from "../zustand/store";
 
 const LOAD_USER_PROFILE_QUERY = gql`
   query loadUserProfile {
@@ -24,9 +27,25 @@ const CHANGE_ABOUT_ME_MUTATION = gql`
   }
 `;
 
+const ADD_PROFILE_PICTURE_MUTATION = gql`
+  mutation addProfilePicture($image: Upload!) {
+    addProfilePicture(picture: $image)
+  }
+`;
+
+const LOG_OUT_MUTATION = gql`
+  mutation logout {
+    logout
+  }
+`;
+
 export const Profile: React.FC = () => {
+  const loggedIn = useStore((state) => state.loggedIn);
+  const setLoggedIn = useStore((state) => state.setLoggedIn);
   const { data, loading } = useQuery(LOAD_USER_PROFILE_QUERY);
   const [changeAboutMe] = useMutation(CHANGE_ABOUT_ME_MUTATION);
+  const [uploadProfileImage] = useMutation(ADD_PROFILE_PICTURE_MUTATION);
+  const [logoutMutation] = useMutation(LOG_OUT_MUTATION);
 
   const [currentAboutMe, setCurrentAboutMe] = useState("");
 
@@ -60,73 +79,144 @@ export const Profile: React.FC = () => {
     aboutMeRef.current.value = userData?.aboutMe;
   }
 
-  if (loading) return <Loading />;
+  const [selectedImage, setSelectedImage] = useState<File>();
+
+  useEffect(() => {
+    console.log(selectedImage);
+  }, [selectedImage]);
+
+  const imageUploadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0].type === "image/jpeg") {
+      console.log(e.target.files[0]);
+      setSelectedImage(e.target.files[0]);
+    }
+  };
+
+  const uploadImage = () => {
+    console.log(selectedImage);
+
+    uploadProfileImage({
+      variables: {
+        image: selectedImage,
+      },
+    });
+  };
+
+  const logOut = () => {
+    console.log("log out");
+    logoutMutation();
+    setLoggedIn(false);
+    return <Redirect to="/login" />;
+  };
+
+  const pageTransition = {
+    in: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: "tween",
+      },
+    },
+    out: {
+      opacity: 0,
+      x: "100%",
+    },
+  };
+
+  if (loggedIn === false) {
+    return <Redirect to="/login" />;
+  }
+
+  if (loggedIn === undefined) {
+    return <Loading />;
+  }
 
   return (
     <div className="profile">
       <Header route={"Profile"} />
 
-      <div className="userProfile">
-        <div className="profileDetails">
-          <img
-            src={userData?.image ? `http://${userData.image}` : ""}
-            alt=""
-            className="profileImage"
-          />
-          <h3 className="userName">
-            {userData?.username}
-            <i className="tag"> #{userData?.tag}</i>
-          </h3>
-          <p className="email">{userData?.email}</p>
-        </div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <motion.div
+          className="userProfile"
+          variants={pageTransition}
+          initial="out"
+          animate="in"
+          exit="out"
+        >
+          <div className="profileDetails">
+            <img
+              src={userData?.image ? `http://${userData.image}` : ""}
+              alt=""
+              className="profileImage"
+            />
+            <h3 className="userName">
+              {userData?.username}
+              <i className="tag"> #{userData?.tag}</i>
+            </h3>
+            <p className="email">{userData?.email}</p>
 
-        <div className="profileExtras">
-          <Formik
-            initialValues={{
-              aboutMe: userData?.aboutMe || "",
-            }}
-            enableReinitialize={true}
-            onSubmit={(values) => {
-              changeAboutMe({
-                variables: {
-                  aboutMe: values.aboutMe,
-                },
-              });
-              setCurrentAboutMe(values.aboutMe);
-            }}
-          >
-            {({ handleSubmit, values }) => (
-              <Form onSubmit={handleSubmit}>
-                <Field
-                  as="textarea"
-                  name="aboutMe"
-                  type="text"
-                  id="aboutMe"
-                  className="changeAbout"
-                  autocomplete="off"
-                />
-                <button
-                  type="submit"
-                  disabled={values.aboutMe === currentAboutMe ? true : false}
-                  className={`changeAboutButton ${
-                    values.aboutMe !== currentAboutMe ? "valid" : ""
-                  }`}
-                >
-                  Save Changes
-                </button>
-              </Form>
-            )}
-          </Formik>
-
-          <div className="accountAge">
-            <h3>Account age:</h3>
-            {accountAgeDetailed.years && (
-              <p>Years: {accountAgeDetailed.years}</p>
-            )}
-            <p>Days: {accountAgeDetailed.days}</p>
+            <label htmlFor="profileImage"></label>
+            <input
+              type="file"
+              name="profileImage"
+              onChange={imageUploadChange}
+            />
+            <button onClick={uploadImage}>Upload Image</button>
           </div>
-        </div>
-      </div>
+
+          <div className="profileExtras">
+            <Formik
+              initialValues={{
+                aboutMe: userData?.aboutMe || "",
+              }}
+              enableReinitialize={true}
+              onSubmit={(values) => {
+                changeAboutMe({
+                  variables: {
+                    aboutMe: values.aboutMe,
+                  },
+                });
+                setCurrentAboutMe(values.aboutMe);
+              }}
+            >
+              {({ handleSubmit, values }) => (
+                <Form onSubmit={handleSubmit}>
+                  <Field
+                    as="textarea"
+                    name="aboutMe"
+                    type="text"
+                    id="aboutMe"
+                    className="changeAbout"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="submit"
+                    disabled={values.aboutMe === currentAboutMe ? true : false}
+                    className={`changeAboutButton ${
+                      values.aboutMe !== currentAboutMe ? "valid" : ""
+                    }`}
+                  >
+                    Save Changes
+                  </button>
+                </Form>
+              )}
+            </Formik>
+            <button className="logOut" onClick={logOut}>
+              Log Out
+            </button>
+
+            <div className="accountAge">
+              <h3>Account age:</h3>
+              {accountAgeDetailed.years && (
+                <p>Years: {accountAgeDetailed.years}</p>
+              )}
+              <p>Days: {accountAgeDetailed.days}</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

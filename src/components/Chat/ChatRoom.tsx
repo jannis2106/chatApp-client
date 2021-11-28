@@ -16,8 +16,10 @@ import {
   faTrash,
   faRedoAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Mutations";
+import { LOAD_ROOM_QUERY } from "../../apollo/graphql/Queries";
 import { Loading } from "../Loading";
+import { ReactComponent as GrayProfile } from "../../sass/images/profile_gray.svg";
+import { motion } from "framer-motion";
 
 const SEND_MESSAGE_MUTATION = gql`
   mutation sendMessage($roomId: Float!, $message: String!) {
@@ -254,14 +256,50 @@ export const ChatRoom = () => {
   // * LOAD_ROOM_QUERY is loading * //
   if (loading) return <Loading />;
 
+  const messageTransition = {
+    in: {
+      opacity: 1,
+      transition: {
+        type: "tween",
+      },
+    },
+    out: {
+      transition: {
+        type: "tween",
+      },
+      opacity: 0,
+    },
+  };
+
+  const messageContainer = {
+    in: {
+      opacity: 0,
+      x: "-50%",
+    },
+    out: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        staggerChildren: 0.5,
+        staggerDirection: -1,
+      },
+    },
+  };
+
   return (
     <div className="chatRoom">
       <header>
         <div className="roomInfos">
-          <img
-            src={roomData?.room.image ? `http://${roomData?.room.image}` : ""}
-            alt=""
-          />
+          {roomData.room.image ? (
+            <img
+              src={`http://${roomData?.room.image}`}
+              alt=""
+              className="roomImage"
+            />
+          ) : (
+            <GrayProfile className="roomImage" />
+          )}
+
           <h1>{roomData?.room.name}</h1>
         </div>
         <div
@@ -276,10 +314,22 @@ export const ChatRoom = () => {
         </div>
       </header>
       <div className="chatBoxWrapper" ref={chatBoxWrapper}>
-        <div className="chatBox">
+        <motion.div
+          className="chatBox"
+          variants={messageContainer}
+          initial="in"
+          animate="out"
+        >
           {messagesData?.loadRoom?.messages.map((message: MessageInterface) => {
             return (
-              <div key={message?.id} className="message">
+              <motion.div
+                key={message?.id}
+                className="message"
+                variants={messageTransition}
+                initial="out"
+                animate="in"
+                exit="out"
+              >
                 <ProfileImage
                   image={message?.user?.image}
                   username={message?.user?.username}
@@ -301,10 +351,10 @@ export const ChatRoom = () => {
                     />
                   </div>
                 )}
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
 
       <form

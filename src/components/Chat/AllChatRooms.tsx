@@ -1,5 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
 import { Redirect } from "react-router";
 import useStore from "../../zustand/store";
 // icons
@@ -7,27 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ReactComponent as GrayProfile } from "../../sass/images/profile_gray.svg";
 import { Loading } from "../Loading";
-
-const LOAD_ALL_ROOMS_QUERY = gql`
-  query loadAllRooms {
-    loadAllRooms {
-      id
-      name
-      image
-    }
-  }
-`;
-
+import { LOAD_ALL_ROOMS_QUERY } from "../../apollo/graphql/Queries";
 interface roomInterface {
   id: number;
   name: string;
   image?: string;
 }
-
-const useForceUpdate = () => {
-  const [, setValue] = useState(0);
-  return () => setValue((value) => value + 1);
-};
 
 export const AllChatRooms = () => {
   const { data, loading } = useQuery(LOAD_ALL_ROOMS_QUERY);
@@ -45,18 +29,9 @@ export const AllChatRooms = () => {
   );
   const isCreateRoomVisible = useStore((state) => state.isCreateRoomVisible);
 
-  const forceRefreshValue = useStore((state) => state.forceRefreshValue);
-
-  const forceUpdate = useForceUpdate();
-
   const onCreateRoomClick = () => {
     setIsCreateRoomVisible(true);
   };
-
-  useEffect(() => {
-    forceUpdate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [forceRefreshValue]);
 
   if (data?.temp === null) {
     return <Redirect to="/login" />;

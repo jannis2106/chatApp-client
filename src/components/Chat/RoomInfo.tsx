@@ -1,10 +1,3 @@
-// acces currentChat Zustand state here
-// load room Info depending on the currentChat
-// maybe don't render as a new route, onliny instead of ChatRoom aber immer noch mit AllChatRooms an der Seite
-// wenn dann aber der Raum gewechselt wird oder der Raum erneut angeklickt wird, wird wieder der Chat gezeigt
-
-// Participants wird aber weiterhin angezegit i guess mal sehen
-
 import React from "react";
 import useStore from "../../zustand/store";
 import { gql, useQuery } from "@apollo/client";

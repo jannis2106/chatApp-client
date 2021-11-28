@@ -5,6 +5,8 @@ import { ProfileImage } from "./ProfileImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { ReactComponent as Logo } from "../sass/images/logo.svg";
+import useStore from "../zustand/store";
+import { Loading } from "./Loading";
 
 const PROFILE_PICTURE_QUERY = gql`
   query profileImage {
@@ -20,6 +22,12 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ route }) => {
   const { data: profileImageData } = useQuery(PROFILE_PICTURE_QUERY);
+  const loggedIn = useStore((state) => state.loggedIn);
+
+  if (loggedIn === false) {
+    return <Loading />;
+  }
+
   return (
     <header className="applicationHeader">
       <div className="leftHeader">
