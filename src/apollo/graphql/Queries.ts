@@ -34,3 +34,13 @@ export const LOAD_ROOM_QUERY = gql`
     }
   }
 `;
+
+export const LOAD_ALL_ROOMS_QUERY = gql`
+  query loadAllRooms {
+    loadAllRooms {
+      id
+      name
+      image
+    }
+  }
+`;

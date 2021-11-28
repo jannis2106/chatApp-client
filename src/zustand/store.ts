@@ -30,7 +30,7 @@ interface ChatState {
   latestMessages: Message[];
   addLatestMessages: (message: Message) => void;
 
-  loggedIn: boolean;
+  loggedIn: boolean | undefined;
   setLoggedIn: (value: boolean) => void;
 
   viewRoomInfo: boolean;
@@ -38,9 +38,6 @@ interface ChatState {
 
   isCreateRoomVisible: boolean;
   setIsCreateRoomVisible: (value: boolean) => void;
-
-  forceRefreshValue: number;
-  setForceRefreshValue: () => void;
 
   currentUsernameTag: string | null;
   setCurrentUsernameTag: (value: string) => void;
@@ -63,7 +60,7 @@ const useStore = create<ChatState>((set) => ({
   addLatestMessages: (message) =>
     set((state) => ({ latestMessages: [...state.latestMessages, message] })),
 
-  loggedIn: false,
+  loggedIn: undefined,
   setLoggedIn: (value) => set((state) => ({ loggedIn: value })),
 
   viewRoomInfo: false,
@@ -72,10 +69,6 @@ const useStore = create<ChatState>((set) => ({
   isCreateRoomVisible: false,
   setIsCreateRoomVisible: (value) =>
     set((state) => ({ isCreateRoomVisible: value })),
-
-  forceRefreshValue: 0,
-  setForceRefreshValue: () =>
-    set((state) => ({ forceRefreshValue: state.forceRefreshValue + 1 })),
 
   currentUsernameTag: null,
   setCurrentUsernameTag: (value) =>
