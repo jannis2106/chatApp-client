@@ -7,40 +7,57 @@ import { Profile } from "./pages/Profile";
 import { CreateRoom } from "./components/Chat/CreateRoom";
 import "./sass/main.sass";
 import { Loading } from "./components/Loading";
+import { AnimatePresence } from "framer-motion";
+import useStore from "./zustand/store";
+import { gql, useQuery } from "@apollo/client";
+
+const LOGGED_IN_QUERY = gql`
+  query loggedIn {
+    loggedIn
+  }
+`;
 
 const App = () => {
+  const { data: loggedInData } = useQuery(LOGGED_IN_QUERY);
+  // const loggedIn = useStore((state) => state.loggedIn);
+  const setLoggedIn = useStore((state) => state.setLoggedIn);
+
+  if (loggedInData?.loggedIn === false) {
+    setLoggedIn(false);
+  }
+  if (loggedInData?.loggedIn) {
+    setLoggedIn(true);
+  }
+
   return (
     <Router>
-      <Switch>
-        <Route exact path="/">
-          <Chat />
-        </Route>
-      </Switch>
-      <Switch>
-        <Route path="/login">
-          <Login />
-        </Route>
-      </Switch>
-      <Switch>
-        <Route path="/register">
-          <Register />
-        </Route>
-      </Switch>
-      <Switch>
-        <Route path="/profile">
-          <Profile />
-        </Route>
-      </Switch>
-      <Switch>
-        <Route path="/createRoom">
-          <CreateRoom />
-        </Route>
-      </Switch>
-      <Switch>
-        <Route path="/test">
-          <Loading />
-        </Route>
-      </Switch>
+      <AnimatePresence>
+        <Switch>
+          <Route exact path="/">
+            <Chat />
+          </Route>
+
+          <Route path="/login">
+            <Login />
+          </Route>
+
+          <Route path="/register">
+            <Register />
+          </Route>
+
+          <Route path="/profile">
+            <Profile />
+          </Route>
+
+          <Route path="/createRoom">
+            <CreateRoom />
+          </Route>
+
+          <Route path="/test">
+            <Loading />
+          </Route>
+        </Switch>
+      </AnimatePresence>
     </Router>
   );
 };
