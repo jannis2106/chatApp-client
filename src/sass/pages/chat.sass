@@ -3,15 +3,25 @@
 @import "./chat/chatRoom"
 @import "./chat/allChatRooms"
 @import "./chat/header"
+@import "./chat/createRoom"
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap')
 
-.application
-    @include main.backgroundImage
-    font-family: 'Roboto', sans-serif
+html
+    overflow: hidden
+    width: 100vw
+    height: 100vh
 
+.application
+    // @include main.backgroundImage
+    font-family: 'Roboto', sans-serif
+    overflow: hidden
+    width: 100vw
+    height: 100vh
 
 .chat
     display: flex
+    overflow: hidden
+    height: calc( 100vh -  5em)
 
     h1
         color: main.$text-color
