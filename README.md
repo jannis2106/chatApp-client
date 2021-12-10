@@ -2,4 +2,5 @@
 
 frontend part for my [chatApp server](https://github.com/currentScript/chatApp-server)
 
-still in production / nothing near finish
+## this is what it looks like:
+<img src="./preview.gif">
