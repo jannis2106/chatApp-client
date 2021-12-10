@@ -81,7 +81,7 @@ export const Participants = () => {
     leaveRoomMutation();
   };
 
-  // handles which inputs are / aren't accepted for addUserInputValue
+  // * handles which inputs are / aren't accepted for addUserInputValue * //
   const handleAddUserInputChange = (e: any) => {
     const value = e.target.value;
 
@@ -91,7 +91,7 @@ export const Participants = () => {
       return;
     }
 
-    // username max-length is 20 -> 20 + # + 4 numbers
+    // * username max-length is 20 -> 20 + # + 4 numbers * //
     if (value.length > 25) {
       return;
     }
@@ -108,7 +108,7 @@ export const Participants = () => {
     const containsHashtagRegex = /#/;
     const isNumberOrHastagRegex = /[0-9]|#/;
 
-    // can't enter letter after #
+    // * can't enter letter after * //
     if (
       containsHashtagRegex.test(value) &&
       !isNumberOrHastagRegex.test(value[value.length - 1])
@@ -117,13 +117,12 @@ export const Participants = () => {
     }
 
     setAddUserInputValue(value);
-    // reset error messages on change
+    // * reset error messages on change * //
     if (addUserMutationData?.addUserToRoom?.message) {
       addUserMutationData.addUserToRoom.message = undefined;
     }
   };
 
-  // add user hint value
   const getAddUserInput = (input: string) => {
     const validRegex =
       /^(([A-Za-z0-9$&+,:;=?@#|'<>.^*()%!-])*)#([0-9][0-9][0-9][0-9])$/gm;

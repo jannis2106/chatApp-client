@@ -46,7 +46,6 @@ export const RoomInfo: React.FC = () => {
           days: roomAge,
         };
 
-  // * LOAD_ROOM_QUERY is loading * //
   if (loading) {
     return (
       <div className="roomInfo">

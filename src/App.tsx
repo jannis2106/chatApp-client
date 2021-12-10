@@ -19,7 +19,6 @@ const LOGGED_IN_QUERY = gql`
 
 const App = () => {
   const { data: loggedInData } = useQuery(LOGGED_IN_QUERY);
-  // const loggedIn = useStore((state) => state.loggedIn);
   const setLoggedIn = useStore((state) => state.setLoggedIn);
 
   if (loggedInData?.loggedIn === false) {

@@ -22,10 +22,12 @@ export const CreateRoom: React.FC = () => {
 
   useEffect(() => {
     if (data && data.createRoom) {
-      setIsCreateRoomVisible(false); // close window
+      // * close window * //
+      setIsCreateRoomVisible(false);
     }
     if (data && data.createRoom === false) {
-      setIsCreateRoomVisible(true); // keep window visible
+      // * keep window visible * //
+      setIsCreateRoomVisible(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -77,7 +79,7 @@ export const CreateRoom: React.FC = () => {
         drag
         dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
         dragPropagation={true}
-        dragElastic={0.7}
+        dragElastic={0.5}
         variants={dropIn}
         initial="hidden"
         animate="visible"
@@ -115,7 +117,7 @@ export const CreateRoom: React.FC = () => {
                   type="text"
                   id="roomName"
                   className="roomNameInput"
-                  autocomplete="off"
+                  autoComplete="off"
                   onChange={validateInput}
                 />
                 <br />

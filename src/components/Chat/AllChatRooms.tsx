@@ -1,12 +1,12 @@
 import { useQuery } from "@apollo/client";
 import { Redirect } from "react-router";
 import useStore from "../../zustand/store";
-// icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { ReactComponent as GrayProfile } from "../../sass/images/profile_gray.svg";
 import { Loading } from "../Loading";
 import { LOAD_ALL_ROOMS_QUERY } from "../../apollo/graphql/Queries";
+
 interface roomInterface {
   id: number;
   name: string;
@@ -16,7 +16,6 @@ interface roomInterface {
 export const AllChatRooms = () => {
   const { data, loading } = useQuery(LOAD_ALL_ROOMS_QUERY);
 
-  // * switch chat rooms * //
   const changeCurrentChat = useStore((state) => state.changeCurrentChat);
   const onChatClick = (chatId: number) => {
     return () => {

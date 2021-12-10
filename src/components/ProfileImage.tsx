@@ -18,10 +18,7 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
       {image ? (
         <img
           width="35px"
-          src={
-            `http://${image}`
-            // : `https://avatars.dicebear.com/api/bottts/${userName}.svg` // change dicebear avatar to logo with dark background , maybe random color like discord did
-          }
+          src={`http://${image}`}
           alt=""
           className="profileImage"
         />

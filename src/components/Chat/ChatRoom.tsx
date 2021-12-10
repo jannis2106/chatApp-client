@@ -9,7 +9,6 @@ import React, {
 import useStore from "../../zustand/store";
 import { ProfileImage } from "../ProfileImage";
 import client from "../../apollo/client";
-// icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPaperPlane,

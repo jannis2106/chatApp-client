@@ -1,7 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { ProfileImage } from "./ProfileImage";
-// icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { ReactComponent as Logo } from "../sass/images/logo.svg";

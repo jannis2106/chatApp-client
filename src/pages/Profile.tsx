@@ -7,6 +7,7 @@ import { Loading } from "../components/Loading";
 import { motion } from "framer-motion";
 import { Redirect } from "react-router-dom";
 import useStore from "../zustand/store";
+import { ProfileImage } from "../components/ProfileImage";
 
 const LOAD_USER_PROFILE_QUERY = gql`
   query loadUserProfile {
@@ -27,12 +28,6 @@ const CHANGE_ABOUT_ME_MUTATION = gql`
   }
 `;
 
-const ADD_PROFILE_PICTURE_MUTATION = gql`
-  mutation addProfilePicture($image: Upload!) {
-    addProfilePicture(picture: $image)
-  }
-`;
-
 const LOG_OUT_MUTATION = gql`
   mutation logout {
     logout
@@ -44,7 +39,6 @@ export const Profile: React.FC = () => {
   const setLoggedIn = useStore((state) => state.setLoggedIn);
   const { data, loading } = useQuery(LOAD_USER_PROFILE_QUERY);
   const [changeAboutMe] = useMutation(CHANGE_ABOUT_ME_MUTATION);
-  const [uploadProfileImage] = useMutation(ADD_PROFILE_PICTURE_MUTATION);
   const [logoutMutation] = useMutation(LOG_OUT_MUTATION);
 
   const [currentAboutMe, setCurrentAboutMe] = useState("");
@@ -78,29 +72,6 @@ export const Profile: React.FC = () => {
   if (aboutMeRef.current && userData?.aboutMe) {
     aboutMeRef.current.value = userData?.aboutMe;
   }
-
-  const [selectedImage, setSelectedImage] = useState<File>();
-
-  useEffect(() => {
-    console.log(selectedImage);
-  }, [selectedImage]);
-
-  const imageUploadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0].type === "image/jpeg") {
-      console.log(e.target.files[0]);
-      setSelectedImage(e.target.files[0]);
-    }
-  };
-
-  const uploadImage = () => {
-    console.log(selectedImage);
-
-    uploadProfileImage({
-      variables: {
-        image: selectedImage,
-      },
-    });
-  };
 
   const logOut = () => {
     console.log("log out");
@@ -146,24 +117,12 @@ export const Profile: React.FC = () => {
           exit="out"
         >
           <div className="profileDetails">
-            <img
-              src={userData?.image ? `http://${userData.image}` : ""}
-              alt=""
-              className="profileImage"
-            />
+            <ProfileImage username={userData.username} image={userData.image} />
             <h3 className="userName">
               {userData?.username}
               <i className="tag"> #{userData?.tag}</i>
             </h3>
             <p className="email">{userData?.email}</p>
-
-            <label htmlFor="profileImage"></label>
-            <input
-              type="file"
-              name="profileImage"
-              onChange={imageUploadChange}
-            />
-            <button onClick={uploadImage}>Upload Image</button>
           </div>
 
           <div className="profileExtras">
@@ -189,7 +148,7 @@ export const Profile: React.FC = () => {
                     type="text"
                     id="aboutMe"
                     className="changeAbout"
-                    autocomplete="off"
+                    autoComplete="off"
                   />
                   <button
                     type="submit"

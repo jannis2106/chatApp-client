@@ -136,7 +136,6 @@ export const Register = () => {
                     onChange={onUsernameChange}
                     name="username"
                     type="text"
-                    // validate={validateUsername}
                     id="username"
                   />
                 </div>
@@ -147,16 +146,9 @@ export const Register = () => {
                     onChange={onEmailChange}
                     name="email"
                     type="email"
-                    // validate={validateEmail}
                     id="email"
                   />
                 </div>
-                {/* {data?.register === null ? (
-                    <div>Account with this email already exists</div>
-                  ) : (
-                    <div></div>
-                  )} */}
-                {/*  */}
                 <label htmlFor="password">Password</label>
                 <div className="inputWrapper">
                   <Field
@@ -164,15 +156,9 @@ export const Register = () => {
                     onChange={onPasswordChange}
                     name="password"
                     type="password"
-                    // validate={validatePassword}
                     id="password"
                   />
                 </div>
-
-                {/* {errors.password && touched.password && (
-                    <div>{errors.password}</div>
-                  )}{" "} */}
-
                 <button
                   type="submit"
                   disabled={isSubmitting}
